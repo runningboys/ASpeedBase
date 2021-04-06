@@ -2,9 +2,6 @@ package com.common.utils.log;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
-
-import com.common.utils.timing.TimingRecorder;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -464,7 +461,7 @@ public final class LogUtil {
      * 添加普通日志
      */
     public static void addCommonLogHandle() {
-        BaseLogHandle defaultLogHandle = new DefaultLogHandle();
+        LogHandle defaultLogHandle = new DefaultLogHandle(new ConsoleLogFormat());
         LogManager.getInstance().addHandle(defaultLogHandle);
     }
 
@@ -472,7 +469,7 @@ public final class LogUtil {
      * 添加文件日志
      */
     public static void addDiskLogHandle(Context context, String folderPath) {
-        BaseLogHandle diskLogHandle = new DiskLogHandle(context, folderPath);
+        LogHandle diskLogHandle = new DiskLogHandle(context, new DiskLogFormat(), folderPath);
         LogManager.getInstance().addHandle(diskLogHandle);
     }
 

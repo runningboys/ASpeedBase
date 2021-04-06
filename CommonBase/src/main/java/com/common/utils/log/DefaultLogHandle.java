@@ -1,7 +1,6 @@
 package com.common.utils.log;
 
 import android.util.Log;
-
 import java.util.Arrays;
 
 /**
@@ -10,24 +9,15 @@ import java.util.Arrays;
  * @author LiuFeng
  * @data 2018/9/20 11:43
  */
-public class DefaultLogHandle extends BaseLogHandle {
+public class DefaultLogHandle extends LogHandle {
+
+    public DefaultLogHandle(LogFormat logFormat) {
+        super(logFormat);
+    }
 
     @Override
     public void log(LogEvent logEvent) {
-        buffer.append("[");
-        buffer.append(logEvent.level.name());
-        buffer.append("] ");
-        buffer.append(getDateTime(logEvent.timestamp));
-        buffer.append(" ");
-        buffer.append(getStackTrace(logEvent.threadName, logEvent.stackTrace, 5));
-        buffer.append(" ");
-        buffer.append(logEvent.tag);
-        buffer.append(" ");
-        buffer.append(logEvent.message);
-
-        print(logEvent.level.getCode(), TAG, buffer.toString());
-
-        buffer.delete(0, buffer.length());
+        print(logEvent.level.getCode(), TAG, logFormat.format(logEvent, TAG));
     }
 
     /**

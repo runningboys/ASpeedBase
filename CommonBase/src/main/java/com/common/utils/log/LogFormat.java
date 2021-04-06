@@ -5,54 +5,26 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * 日志操作器基类
+ * 日志格式
  *
  * @author LiuFeng
- * @data 2018/9/20 11:45
+ * @data 2021/3/13 8:37
  */
-public abstract class BaseLogHandle {
-
-    protected static String TAG = "DEFAULT_TAG";
-
+public abstract class LogFormat {
     protected final StringBuilder buffer = new StringBuilder();
 
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.UK);
+    private final SimpleDateFormat timeFormat = new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.UK);
 
-    private Date date = new Date();
-
-    /**
-     * 获得日志句柄名称（默认类名）
-     *
-     * @return 返回日志句柄名称。
-     */
-    public String getLogHandleName() {
-        return this.getClass().getName();
-    }
+    private final Date date = new Date();
 
     /**
-     * 日志打印
+     * 格式化输出
      *
-     * @param logEvent 日志事件
+     * @param logEvent
+     * @param TAG
+     * @return
      */
-    public abstract void log(LogEvent logEvent);
-
-    /**
-     * 获取tag
-     *
-     * @return 全局日志标签。
-     */
-    public String getTag() {
-        return TAG;
-    }
-
-    /**
-     * 设置tag
-     *
-     * @param tag 全局日志标签。
-     */
-    public void setTag(String tag) {
-        TAG = tag;
-    }
+    public abstract String format(LogEvent logEvent, String TAG);
 
     /**
      * 获取格式化时间

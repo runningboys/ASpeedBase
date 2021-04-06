@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 public final class LogManager {
 
     /** 日志处理器列表。 */
-    private ArrayList<BaseLogHandle> handles = new ArrayList<>();
+    private ArrayList<LogHandle> handles = new ArrayList<>();
 
     /** 当前日志等级。 */
     private LogLevel level = LogLevel.DEBUG;
@@ -40,7 +40,7 @@ public final class LogManager {
      * 初始化默认日志处理
      */
     private void init() {
-        BaseLogHandle defaultLogHandle = new DefaultLogHandle();
+        LogHandle defaultLogHandle = new DefaultLogHandle(new ConsoleLogFormat());
         this.handles.add(defaultLogHandle);
     }
 
@@ -117,7 +117,7 @@ public final class LogManager {
      * @param tag
      */
     public void setLogTag(String tag) {
-        for (BaseLogHandle handle : this.handles) {
+        for (LogHandle handle : this.handles) {
             handle.setTag(tag);
         }
     }
@@ -179,7 +179,7 @@ public final class LogManager {
                 logEvent.threadName = threadName;
                 logEvent.stackTrace = stackTrace;
 
-                for (BaseLogHandle handle : handles) {
+                for (LogHandle handle : handles) {
                     // 默认日志打印时，非连接USB状态则跳过打印（提升性能）
                     if (handle instanceof DefaultLogHandle && !isUsbConnected) {
                         continue;
@@ -200,7 +200,7 @@ public final class LogManager {
         }
 
         synchronized (this) {
-            for (BaseLogHandle handle : this.handles) {
+            for (LogHandle handle : this.handles) {
                 // 判断是否磁盘日志操作器
                 if (handle instanceof DiskLogHandle) {
                     ((DiskLogHandle) handle).flushLog();
@@ -233,9 +233,9 @@ public final class LogManager {
      *
      * @return 返回指定名称的处理器。
      */
-    public BaseLogHandle getHandle(String name) {
+    public LogHandle getHandle(String name) {
         synchronized (this) {
-            for (BaseLogHandle handle : this.handles) {
+            for (LogHandle handle : this.handles) {
                 if (handle.getLogHandleName().equals(name)) {
                     return handle;
                 }
@@ -250,13 +250,13 @@ public final class LogManager {
      *
      * @param handle 需添加的日志处理器。
      */
-    public void addHandle(BaseLogHandle handle) {
+    public void addHandle(LogHandle handle) {
         synchronized (this) {
             if (this.handles.contains(handle)) {
                 return;
             }
 
-            for (BaseLogHandle h : this.handles) {
+            for (LogHandle h : this.handles) {
                 if (h.getLogHandleName().equals(handle.getLogHandleName())) {
                     return;
                 }
@@ -271,7 +271,7 @@ public final class LogManager {
      *
      * @param handle 需移除的日志处理器。
      */
-    public void removeHandle(BaseLogHandle handle) {
+    public void removeHandle(LogHandle handle) {
         synchronized (this) {
             this.handles.remove(handle);
         }

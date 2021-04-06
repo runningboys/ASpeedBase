@@ -30,7 +30,7 @@ import java.util.List;
  * @author LiuFeng
  * @date 2018-9-01
  */
-public class DiskLogHandle extends BaseLogHandle {
+public class DiskLogHandle extends LogHandle {
 
     private final static String LOG_FILE_NAME      = "yyyy-MM-dd-HH";     // 日志文件名格式
     private static final int    EMPTY_WHAT         = 100;                 // 空消息what
@@ -47,10 +47,13 @@ public class DiskLogHandle extends BaseLogHandle {
     private Handler handler;
     private Context mContext;
     private String  mFolderPath;
+    private StringBuilder buffer;
 
-    public DiskLogHandle(Context context, String folderPath) {
+    public DiskLogHandle(Context context, LogFormat logFormat, String folderPath) {
+        super(logFormat);
         this.mContext = context;
         this.mFolderPath = folderPath;
+        this.buffer = new StringBuilder();
         HandlerThread thread = new HandlerThread("DiskLogHandle");
         thread.start();
         handler = new WriteHandler(thread.getLooper());
@@ -58,21 +61,7 @@ public class DiskLogHandle extends BaseLogHandle {
 
     @Override
     public synchronized void log(LogEvent logEvent) {
-        buffer.append(buffer.length() > 0 ? "\n" : "");
-        buffer.append(TAG);
-        buffer.append(": ");
-        buffer.append("[");
-        buffer.append(logEvent.level.name());
-        buffer.append("] ");
-        buffer.append(getDateTime(logEvent.timestamp));
-        buffer.append(" ");
-        buffer.append(getStackTrace(logEvent.threadName, logEvent.stackTrace, 5));
-        buffer.append(" ");
-        buffer.append(logEvent.tag);
-        buffer.append(" ");
-        buffer.append(logEvent.message);
-        buffer.append("\n");
-
+        buffer.append(logFormat.format(logEvent, TAG));
         handleLog();
     }
 

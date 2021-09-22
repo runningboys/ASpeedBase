@@ -11,7 +11,7 @@ import rx.Subscriber;
  * @author LiuFeng
  * @data 2020/2/8 11:36
  */
-public abstract class OnSubscribeRoom<T> implements Observable.OnSubscribe<T> {
+public abstract class OnSubscribe<T> implements Observable.OnSubscribe<T> {
 
     @Override
     public void call(Subscriber<? super T> subscriber) {

@@ -274,6 +274,80 @@ public class StringUtil {
     }
 
     /**
+     * 判断包含忽略大小写
+     *
+     * @param text
+     * @param keyword
+     * @return
+     */
+    public static boolean containsIgnoreCase(String text, String keyword) {
+        return indexOfIgnoreCase(text, keyword) > -1;
+    }
+
+
+    /**
+     * 获取关键字位置忽略大小写
+     *
+     * @param text
+     * @param keyword
+     * @return
+     */
+    public static int indexOfIgnoreCase(String text, String keyword) {
+        String lowerText = text.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase();
+        return indexOf(lowerText, lowerKeyword);
+    }
+
+
+    /**
+     * 获取关键字在文本中位置
+     *
+     * @param text
+     * @param keyword
+     * @return
+     */
+    public static int indexOf(String text, String keyword) {
+        char[] hString = text.toCharArray();
+        char[] nString = keyword.toCharArray();
+        int hLen = hString.length;
+        int nLen = nString.length;
+
+        if (hLen < nLen) return -1;
+
+        int hIndex = 0;
+        int nIndex = 0;
+
+        char next = 0;
+        if (hLen != nLen) next = hString[nLen];
+
+        while (hIndex < hLen && nIndex < nLen) {
+            if (hString[hIndex] != nString[nIndex]) {
+                if (hIndex - nIndex + nLen >= hLen) return -1;
+
+                int i = nLen - 1;
+                while (i >= 0) {
+                    if (nString[i] == next) break;
+                    i--;
+                }
+
+                hIndex += nLen - nIndex - i;
+                nIndex = 0;
+
+                if (hIndex + nLen < hLen)
+                    next = hString[hIndex + nLen];
+                else
+                    next = 0;
+            } else {
+                hIndex++;
+                nIndex++;
+            }
+        }
+
+        if (nIndex == nLen) return hIndex - nIndex;
+        return -1;
+    }
+
+    /**
      * 获取资源ID的文本
      *
      * @param resId

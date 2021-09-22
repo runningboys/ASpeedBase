@@ -8,9 +8,9 @@ package com.common.data;
  */
 public class ApiException extends RuntimeException {
 
-    private int      code;
-    private String   desc;
-    private BaseData data;
+    private int code;
+    private String desc;
+    private Object data;
 
     public ApiException(ResultData resultData) {
         this.data = resultData.data;
@@ -26,7 +26,7 @@ public class ApiException extends RuntimeException {
         return desc;
     }
 
-    public BaseData getData() {
+    public Object getData() {
         return data;
     }
 

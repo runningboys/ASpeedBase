@@ -1,11 +1,13 @@
 package com.common.data;
 
+import java.io.Serializable;
+
 /**
  * 服务器响应的结果数据
  *
  * @param <T>
  */
-public class ResultData<T extends BaseData> extends BaseData {
+public class ResultData<T> implements Serializable {
 
     /**
      * 状态码

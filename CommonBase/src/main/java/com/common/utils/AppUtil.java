@@ -7,11 +7,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
+import com.common.CommonUtil;
 import com.common.utils.log.LogUtil;
 
 import java.io.File;
@@ -241,4 +244,42 @@ public class AppUtil {
         return folder.getAbsolutePath();
     }
 
+    /**
+     * 获取内部资源
+     *
+     * @return
+     */
+    public static Resources getResources() {
+        return CommonUtil.getContext().getResources();
+    }
+
+    /**
+     * 获取应用包名
+     *
+     * @return
+     */
+    public static String getPackageName() {
+        return CommonUtil.getContext().getPackageName();
+    }
+
+    /**
+     * 创建主题
+     *
+     * @param styleRes
+     * @return
+     */
+    public static Resources.Theme createTheme(int styleRes) {
+        Resources.Theme theme = getResources().newTheme();
+        theme.applyStyle(styleRes, true);
+        return theme;
+    }
+
+    /**
+     * 判断黑暗模式
+     *
+     * @return
+     */
+    public static boolean isDarkMode() {
+        return (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
 }

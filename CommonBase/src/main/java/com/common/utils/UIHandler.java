@@ -2,11 +2,18 @@ package com.common.utils;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import androidx.annotation.NonNull;
 
 /**
  * UI数据刷新操作
  */
 public class UIHandler extends Handler {
+    private static final Map<Integer, Runnable> taskMap = new ConcurrentHashMap<>();
 
     private UIHandler() {
         super(Looper.getMainLooper());
@@ -31,11 +38,11 @@ public class UIHandler extends Handler {
      * @param runnable
      */
     public static void run(Runnable runnable) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (isMainThread()) {
             runnable.run();
-            return;
+        } else {
+            getInstance().post(runnable);
         }
-        getInstance().post(runnable);
     }
 
     /**
@@ -46,6 +53,22 @@ public class UIHandler extends Handler {
      */
     public static void run(Runnable runnable, long delayMillis) {
         getInstance().postDelayed(runnable, delayMillis);
+    }
+
+    /**
+     * 运行在主线程(延迟执行)
+     *
+     * @param tag 任务的唯一标记，实现新的任务覆盖旧的未执行任务
+     * @param runnable
+     * @param delayMillis
+     */
+    public static void run(String tag, Runnable runnable, long delayMillis) {
+        int what = tag.hashCode();
+        if (taskMap.containsKey(what)) {
+            getInstance().removeMessages(what);
+        }
+        taskMap.put(what, runnable);
+        getInstance().sendEmptyMessageDelayed(what, delayMillis);
     }
 
     /**
@@ -62,5 +85,13 @@ public class UIHandler extends Handler {
      */
     public static void dispose() {
         getInstance().removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void handleMessage(@NonNull Message msg) {
+        super.handleMessage(msg);
+        if (taskMap.containsKey(msg.what)) {
+            taskMap.remove(msg.what).run();
+        }
     }
 }

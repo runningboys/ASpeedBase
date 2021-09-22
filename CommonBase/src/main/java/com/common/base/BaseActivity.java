@@ -6,12 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import androidx.annotation.LayoutRes;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import com.common.eventbus.Event;
-import com.common.eventbus.EventBusUtil;
+
 import com.common.manager.ActivityManager;
 import com.common.receiver.NetworkStateReceiver;
 import com.common.utils.ClickUtil;
@@ -20,10 +15,13 @@ import com.common.utils.ToastUtil;
 import com.common.utils.UIHandler;
 import com.common.utils.log.LogUtil;
 import com.umeng.analytics.MobclickAgent;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+
+import androidx.annotation.LayoutRes;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * 基础的activity
@@ -31,12 +29,11 @@ import org.greenrobot.eventbus.ThreadMode;
  * @author LiuFeng
  * @date 2017-11-01
  */
-public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity implements View.OnClickListener, BaseView, NetworkStateReceiver.NetworkStateChangedListener {
+public abstract class BaseActivity extends EventBusActivity implements View.OnClickListener, BaseView, NetworkStateReceiver.NetworkStateChangedListener {
 
-    protected P       mPresenter;
-    protected Bundle  mSavedInstanceState;
-    private   Handler mHandler;
-    private   boolean mDestroyed = false;
+    protected Bundle mSavedInstanceState;
+    private Handler mHandler;
+    private boolean mDestroyed;
     protected Context mContext;
 
     @Override
@@ -45,13 +42,10 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         ActivityManager.getInstance().addActivity(this);
         setContentView(this.getContentViewId());
         this.mContext = this;
-        this.mPresenter = this.createPresenter();
         this.initToolBar();
         this.initView();
         this.initListener();
-        if (openEventBus()) {
-            EventBusUtil.register(this);
-        }
+
         if (openNetworkListener()) {
             NetworkStateReceiver.getInstance().addNetworkStateChangedListener(this);
         }
@@ -72,15 +66,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * @return Id
      */
     protected abstract int getContentViewId();
-
-    /**
-     * 创建presenter
-     *
-     * @return Presenter
-     */
-    protected abstract P createPresenter();
-
-    ;
 
     /**
      * 初始化数据
@@ -186,12 +171,10 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         if (isShow) {
             if (getCurrentFocus() == null) {
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-            }
-            else {
+            } else {
                 imm.showSoftInput(getCurrentFocus(), 0);
             }
-        }
-        else {
+        } else {
             if (getCurrentFocus() != null) {
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
@@ -222,7 +205,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * 添加一个fragment
      *
      * @param fragment
-     *
      * @return
      */
     public BaseFragment addFragment(BaseFragment fragment) {
@@ -237,7 +219,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * 添加fragment列表
      *
      * @param fragments
-     *
      * @return
      */
     public List<BaseFragment> addFragmentList(List<BaseFragment> fragments) {
@@ -273,7 +254,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * 切换fragment
      *
      * @param fragment
-     *
      * @return
      */
     public <T extends BaseFragment> T switchContent(T fragment) {
@@ -286,7 +266,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * @param fragment
      * @param needAddToBackStack 是否需要添加到返回栈
      * @param tag
-     *
      * @return
      */
     protected <T extends BaseFragment> T switchContent(T fragment, boolean needAddToBackStack, String tag) {
@@ -294,8 +273,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         if (tag != null) {
             fragmentTransaction.replace(fragment.getContainerId(), fragment, tag);
-        }
-        else {
+        } else {
             fragmentTransaction.replace(fragment.getContainerId(), fragment);
         }
 
@@ -343,8 +321,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     public boolean isDestroyed() {
         if (Build.VERSION.SDK_INT >= 17) {
             return super.isDestroyed();
-        }
-        else {
+        } else {
             return this.mDestroyed || super.isFinishing();
         }
     }
@@ -360,14 +337,9 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         super.onDestroy();
         ClickUtil.clear();
         this.mDestroyed = true;
-        if (openEventBus()) {
-            EventBusUtil.unregister(this);
-        }
+
         if (openNetworkListener()) {
             NetworkStateReceiver.getInstance().removeNetworkStateChangedListener(this);
-        }
-        if (this.mPresenter != null) {
-            this.mPresenter.onDestroy();
         }
     }
 
@@ -378,70 +350,5 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      */
     protected boolean openNetworkListener() {
         return false;
-    }
-
-    /**
-     * 是否打开注册事件分发
-     *
-     * @return true绑定EventBus事件分发，false不绑定
-     */
-    protected boolean openEventBus() {
-        return false;
-    }
-
-    /**
-     * 接收事件
-     *
-     * @param event
-     * @param <T>
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public <T> void onEventBusCome(Event<T> event) {
-        if (mDestroyed) {
-            return;
-        }
-
-        if (event != null) {
-            onMessageEvent(event.eventName, event.data);
-        }
-    }
-
-    /**
-     * 接收粘性事件
-     *
-     * @param event
-     * @param <T>
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public <T> void onStickyEventBusCome(Event<T> event) {
-        if (mDestroyed) {
-            return;
-        }
-
-        if (event != null) {
-            onMessageStickyEvent(event.eventName, event.data);
-        }
-    }
-
-    /**
-     * 接收事件
-     *
-     * @param eventName
-     * @param data
-     * @param <T>
-     */
-    public <T> void onMessageEvent(String eventName, T data) {
-
-    }
-
-    /**
-     * 接收粘性事件
-     *
-     * @param eventName
-     * @param data
-     * @param <T>
-     */
-    public <T> void onMessageStickyEvent(String eventName, T data) {
-
     }
 }

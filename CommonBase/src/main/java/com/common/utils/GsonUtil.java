@@ -1,17 +1,13 @@
 package com.common.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -35,16 +31,25 @@ import org.json.JSONTokener;
  * @date 2017-11-13
  */
 public class GsonUtil {
-    private static Gson gson = new Gson();
+    private static final Gson gson = newGson();
 
-    private GsonUtil() {
+    private GsonUtil() {}
+
+    /**
+     * 创建Gson对象
+     *
+     * @return
+     */
+    private static Gson newGson() {
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapterFactory(new GsonTypeAdapterFactory());
+        return gb.create();
     }
 
     /**
      * object转成json
      *
      * @param object
-     *
      * @return
      */
     public static String toJson(Object object) {
@@ -56,7 +61,6 @@ public class GsonUtil {
      *
      * @param object
      * @param typeOfT
-     *
      * @return
      */
     public static String toJson(Object object, Type typeOfT) {
@@ -69,7 +73,6 @@ public class GsonUtil {
      * @param jsonStr
      * @param cls
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(String jsonStr, Class<T> cls) {
@@ -80,7 +83,6 @@ public class GsonUtil {
      * json转成bean
      *
      * @param jsonStr
-     *
      * @return
      */
     public static <T> T toBean(String jsonStr, Type typeOfT) {
@@ -93,7 +95,6 @@ public class GsonUtil {
      * @param object
      * @param cls
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(Object object, Class<T> cls) {
@@ -106,7 +107,6 @@ public class GsonUtil {
      * @param object
      * @param typeOfT
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(Object object, Type typeOfT) {
@@ -119,7 +119,6 @@ public class GsonUtil {
      * @param jsonObject
      * @param cls
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(JSONObject jsonObject, Class<T> cls) {
@@ -132,7 +131,6 @@ public class GsonUtil {
      * @param jsonObject
      * @param typeOfT
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(JSONObject jsonObject, Type typeOfT) {
@@ -145,7 +143,6 @@ public class GsonUtil {
      * @param jsonArray
      * @param cls
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(JSONArray jsonArray, Class<T> cls) {
@@ -158,7 +155,6 @@ public class GsonUtil {
      * @param jsonArray
      * @param typeOfT
      * @param <T>
-     *
      * @return
      */
     public static <T> T toBean(JSONArray jsonArray, Type typeOfT) {
@@ -169,16 +165,14 @@ public class GsonUtil {
      * object转成JSONObject
      *
      * @param object
-     *
      * @return
-     *
      * @throws JSONException
      */
     public static JSONObject toJSONObject(Object object) {
         try {
             return new JSONObject(gson.toJson(object));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -186,16 +180,14 @@ public class GsonUtil {
      * json转成JSONObject
      *
      * @param jsonStr
-     *
      * @return
-     *
      * @throws JSONException
      */
     public static JSONObject toJSONObject(String jsonStr) {
         try {
             return new JSONObject(jsonStr);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -203,16 +195,14 @@ public class GsonUtil {
      * object转成JSONArray
      *
      * @param object
-     *
      * @return
-     *
      * @throws JSONException
      */
     public static JSONArray toJSONArray(Object object) {
         try {
             return new JSONArray(toJson(object));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -220,16 +210,14 @@ public class GsonUtil {
      * json转成JSONArray
      *
      * @param jsonStr
-     *
      * @return
-     *
      * @throws JSONException
      */
     public static JSONArray toJSONArray(String jsonStr) {
         try {
             return new JSONArray(jsonStr);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -237,14 +225,13 @@ public class GsonUtil {
      * Collection转成JSONArray
      *
      * @param collection
-     *
      * @return
      */
     public static JSONArray toJSONArray(Collection collection) {
         try {
             return new JSONArray(toJson(collection));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -252,7 +239,6 @@ public class GsonUtil {
      * json转成list
      *
      * @param jsonStr
-     *
      * @return
      */
     public static <T> List<T> toList(String jsonStr) {
@@ -263,7 +249,6 @@ public class GsonUtil {
      * json转成map
      *
      * @param jsonStr
-     *
      * @return
      */
     public static <T> Map<String, T> toMap(String jsonStr) {
@@ -274,12 +259,16 @@ public class GsonUtil {
      * Json转List集合,遇到解析不了的，就使用这个
      */
     public static <T> List<T> toList(String json, Class<T> cls) {
-        JsonArray array = JsonParser.parseString(json).getAsJsonArray();
-        List<T> mList = new ArrayList<T>(array.size());
-        for (JsonElement elem : array) {
-            mList.add(gson.fromJson(elem, cls));
+        try {
+            JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+            List<T> mList = new ArrayList<T>(array.size());
+            for (JsonElement elem : array) {
+                mList.add(gson.fromJson(elem, cls));
+            }
+            return mList;
+        } catch (Exception e) {
+            return null;
         }
-        return mList;
     }
 
     /**
@@ -288,85 +277,99 @@ public class GsonUtil {
      * @param jsonStr
      * @param cls
      * @param <T>
-     *
      * @return
      */
     public static <T> Map<String, T> toMap(String jsonStr, Class<T> cls) {
-        JsonObject object = JsonParser.parseString(jsonStr).getAsJsonObject();
-        Map<String, T> dataMap = new HashMap<>(object.size());
-        for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            String key = entry.getKey();
-            JsonElement elem = entry.getValue();
-            dataMap.put(key, gson.fromJson(elem, cls));
-        }
+        try {
+            JsonObject object = new JsonParser().parse(jsonStr).getAsJsonObject();
+            Map<String, T> dataMap = new HashMap<>(object.size());
+            for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+                String key = entry.getKey();
+                JsonElement elem = entry.getValue();
+                dataMap.put(key, gson.fromJson(elem, cls));
+            }
 
-        return dataMap;
+            return dataMap;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
      * 判断是否json字符串
      *
      * @param content
-     *
      * @return
      */
     public static boolean isJson(String content) {
         try {
             Object object = new JSONTokener(content).nextValue();
             return object instanceof JSONObject || object instanceof JSONArray;
-        } catch (JSONException ignored) {
+        } catch (Exception ignored) {
         }
         return false;
     }
 
-    /**
-     * 将json中的null替换成""
-     * <p>
-     * 用法：
-     * GsonBuilder gb = new GsonBuilder();
-     * gb.registerTypeAdapter(String.class, new StringConverter());
-     * Gson gson = gb.create();
-     */
-    public static class StringConverter implements JsonSerializer<String>, JsonDeserializer<String> {
-        @Override
-        public JsonElement serialize(String src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src == null) {
-                return new JsonPrimitive("");
-            }
-            else {
-                return new JsonPrimitive(src);
-            }
-        }
-
-        @Override
-        public String deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return json.getAsJsonPrimitive().getAsString();
-        }
-    }
 
     /**
-     * 将json中的null替换成""
-     * 自定义Strig适配器
+     * 处理JSON和数据类型不对应时，不抛异常
      */
-    public static class StringTypeAdapter extends TypeAdapter<String> {
-
+    public static class GsonTypeAdapterFactory implements TypeAdapterFactory {
         @Override
-        public String read(JsonReader reader) throws IOException {
-            if (reader.peek() == JsonToken.NULL) {
-                reader.nextNull();
-                return "";
-            }
-            return reader.nextString();
-        }
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+            final TypeAdapter<T> adapter = gson.getDelegateAdapter(this, type);
+            return new TypeAdapter<T>() {
+                @Override
+                public void write(JsonWriter out, T value) throws IOException {
+                    adapter.write(out, value);
+                }
 
-        @Override
-        public void write(JsonWriter writer, String value) throws IOException {
-            if (value == null) {
-                // 在这里处理null改为空字符串
-                writer.value("");
-                return;
-            }
-            writer.value(value);
+                @Override
+                public T read(JsonReader in) {
+                    //gson 库会通过JsonReader对json对象的每个字段进项读取,当发现类型不匹配时抛出异常
+                    try {
+                        return adapter.read(in);
+                    } catch (Throwable e) {
+                        //那么我们就在它抛出异常的时候进行处理,让它继续不中断接着往下读取其他的字段就好了
+                        try {
+                            consumeAll(in);
+                        } catch (Throwable ignored) {
+                        }
+                    }
+
+                    return null;
+                }
+
+                private void consumeAll(JsonReader in) throws Exception {
+                    if (in.hasNext()) {
+                        JsonToken peek = in.peek();
+                        if (peek == JsonToken.STRING) {
+                            in.nextString();
+                        } else if (peek == JsonToken.BEGIN_ARRAY) {
+                            in.beginArray();
+                            consumeAll(in);
+                            in.endArray();
+                        } else if (peek == JsonToken.BEGIN_OBJECT) {
+                            in.beginObject();
+                            consumeAll(in);
+                            in.endObject();
+                        } else if (peek == JsonToken.END_ARRAY) {
+                            in.endArray();
+                        } else if (peek == JsonToken.END_OBJECT) {
+                            in.endObject();
+                        } else if (peek == JsonToken.NUMBER) {
+                            in.nextString();
+                        } else if (peek == JsonToken.BOOLEAN) {
+                            in.nextBoolean();
+                        } else if (peek == JsonToken.NAME) {
+                            in.nextName();
+                            consumeAll(in);
+                        } else if (peek == JsonToken.NULL) {
+                            in.nextNull();
+                        }
+                    }
+                }
+            };
         }
     }
 }

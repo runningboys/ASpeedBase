@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--顶层Theme，各个 API Level 自行决定继承自系统的哪个 Theme-->
+    <style name="AppRootTheme" parent="Theme.AppCompat.DayNight"/>
+
+
+    <!--基础Theme，定义所有共有的style-->
+    <style name="AppBaseTheme" parent="AppRootTheme">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button</item>
+        <item name="android:imageButtonStyle">@style/Widget.AppCompat.ImageButton</item>
+        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView</item>
+        <item name="android:editTextStyle">@style/EditText.Compat</item>
+
+        <item name="buttonStyle">@style/Widget.AppCompat.Button</item>
+        <item name="imageButtonStyle">@style/Widget.AppCompat.ImageButton</item>
+        <item name="editTextStyle">@style/EditText.Compat</item>
+    </style>
+
+
+    <!--配置Theme，各个 API Level 自行配置各自的 style 差异化-->
+    <style name="AppConfigTheme" parent="AppBaseTheme">
+        <item name="colorPrimary">?attr/skin_app_primary_color</item>
+
+        <!-- 状态栏颜色 -->
+        <item name="colorPrimaryDark">?attr/skin_app_primary_color</item>
+
+        <!--按钮选中或者点击获得焦点后的颜色-->
+        <item name="colorAccent">?attr/skin_app_primary_color</item>
+
+        <!--没有获取焦点时候下划线的颜色-->
+        <item name="colorControlNormal">@color/skin_app_primary_color</item>
+
+        <!--导航栏上的标题颜色-->
+        <item name="android:textColorPrimary">?attr/skin_app_primary_color</item>
+        <item name="android:textColorSecondary">?attr/skin_app_primary_color</item>
+
+        <!-- 窗口的背景颜色 -->
+        <item name="android:windowBackground">?attr/skin_app_window_bg_color</item>
+
+        <!--EditText 输入框中字体的颜色-->
+        <item name="android:editTextColor">?attr/skin_edit_text_color</item>
+    </style>
+
+
+    <style name="AppUI" parent="AppConfigTheme"/>
+
+
+    <style name="AppUI.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="EditText.Compat" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">?attr/skin_edit_text_color</item>
+        <item name="android:textColorHint">?attr/skin_edit_text_color</item>
+        <!-- 光标颜色与textColor一致，若要自定义，应该用ShapeDrawable，不能简单指定一个color -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+</resources>

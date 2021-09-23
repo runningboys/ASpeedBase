@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/skin_app_window_bg_color"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/skin_change_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="皮肤切换"
+        android:background="@color/skin_common_background"
+        android:textColor="@color/skin_common_title_text_color" />
+
+    <Button
+        android:id="@+id/dialog_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="弹窗"
+        android:background="@color/skin_common_background"
+        android:textColor="@color/skin_common_title_text_color" />
+
+    <Button
+        android:id="@+id/add_view_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="添加view"
+        android:background="@color/skin_common_background"
+        android:textColor="@color/skin_common_title_text_color" />
+
+</LinearLayout>

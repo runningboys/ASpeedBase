@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="view_skin" type="id"/>
+    <item name="skin_attrs" type="id" />
+    <item name="skin_interceptor" type="id"/>
+    <item name="skin_apply_listener" type="id"/>
+</resources>

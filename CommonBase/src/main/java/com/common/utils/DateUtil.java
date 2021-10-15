@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * 日期、时间工具类
@@ -357,6 +358,49 @@ public class DateUtil {
         ca.clear(Calendar.MILLISECOND);
         ca.set(Calendar.DAY_OF_YEAR, 1);
         return ca.getTimeInMillis();
+    }
+
+    /**
+     * 获取今天的开始时间
+     *
+     * @return
+     */
+    public static long getTimeOfDayStart() {
+        return getTimeOfDayStart(System.currentTimeMillis());
+    }
+
+    /**
+     * 获取今天的结束时间
+     *
+     * @return
+     */
+    public static long getTimeOfDayEnd() {
+        return getTimeOfDayEnd(System.currentTimeMillis());
+    }
+
+    /**
+     * 获取任意时间的默认时区的当天开始时间
+     *
+     * @param time
+     * @return
+     */
+    public static long getTimeOfDayStart(long time) {
+        // 一天的毫秒值
+        long oneDay = 86400_000L;
+        // UTC时区偏移量，例如：在中国(东八区：UTC+8)，
+        // 偏移量等于 8 * 60 * 60 * 1000
+        long offset = TimeZone.getDefault().getRawOffset();
+        return time - (time + offset) % oneDay;
+    }
+
+    /**
+     * 获取任意时间的默认时区的当天结束时间
+     *
+     * @param time
+     * @return
+     */
+    public static long getTimeOfDayEnd(long time) {
+        return getTimeOfDayStart(time) + 86400_000L - 1;
     }
 
     /**

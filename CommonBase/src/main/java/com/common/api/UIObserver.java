@@ -1,7 +1,7 @@
 package com.common.api;
 
 
-import com.common.base.BaseView;
+import com.common.base.ability.IBaseView;
 
 import androidx.lifecycle.Observer;
 
@@ -12,9 +12,9 @@ import androidx.lifecycle.Observer;
  * @data 2020/4/28 17:55
  */
 public abstract class UIObserver<T> implements Observer<NetResult<T>> {
-    private BaseView view;
+    private IBaseView view;
 
-    public UIObserver(BaseView view) {
+    public UIObserver(IBaseView view) {
         this.view = view;
     }
 

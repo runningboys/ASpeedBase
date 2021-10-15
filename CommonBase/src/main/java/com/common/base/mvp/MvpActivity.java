@@ -3,6 +3,7 @@ package com.common.base.mvp;
 import android.os.Bundle;
 import com.common.base.BaseActivity;
 import com.common.base.BasePresenter;
+import com.common.base.ability.IPresenter;
 
 /**
  * MVP模式Activity
@@ -10,7 +11,7 @@ import com.common.base.BasePresenter;
  * @author LiuFeng
  * @data 2021/9/22 16:19
  */
-public abstract class BaseMvpActivity<P extends BasePresenter> extends BaseActivity {
+public abstract class MvpActivity<P extends BasePresenter> extends BaseActivity implements IPresenter<P> {
 
     protected P mPresenter;
 
@@ -27,11 +28,4 @@ public abstract class BaseMvpActivity<P extends BasePresenter> extends BaseActiv
             this.mPresenter.onDestroy();
         }
     }
-
-    /**
-     * 创建Presenter
-     *
-     * @return
-     */
-    protected abstract P createPresenter();
 }

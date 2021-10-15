@@ -8,19 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import com.common.base.ability.IBaseView;
+import com.common.base.ability.IEventBus;
+import com.common.base.ability.INetMonitor;
 import com.common.eventbus.Event;
-import com.common.eventbus.EventBusUtil;
-import com.common.receiver.NetworkStateReceiver;
 import com.common.utils.ClickUtil;
-import com.common.utils.NetworkUtil;
 import com.common.utils.log.LogUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 /**
  * Fragment基类
@@ -28,24 +28,21 @@ import org.greenrobot.eventbus.ThreadMode;
  * @author LiuFeng
  * @date 2017-11-01
  */
-public abstract class BaseFragment<P extends BasePresenter> extends Fragment implements View.OnClickListener, BaseView, NetworkStateReceiver.NetworkStateChangedListener {
+public abstract class BaseFragment extends Fragment implements IEventBus, INetMonitor, IBaseView, View.OnClickListener {
 
     protected View mRootView;
     protected Activity mActivity;
 
-    protected P mPresenter;
-
     //fragment布局资源id
     private int containerId;
-
-    //是否销毁
-    private boolean destroyed;
 
     // 标识fragment视图已经初始化完毕
     private boolean mIsViewPrepared;
 
     // 标识已经触发过懒加载数据
     private boolean mHasLoadData;
+
+    private boolean isDestroyed;
 
     public int getContainerId() {
         return containerId;
@@ -61,13 +58,6 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
      * @return
      */
     protected abstract int getContentViewId();
-
-    /**
-     * 创建presenter
-     *
-     * @return
-     */
-    protected abstract P createPresenter();
 
     /**
      * 初始化组件
@@ -96,15 +86,6 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     public void onClick(View v) {
     }
 
-    protected final boolean isDestroyed() {
-        return destroyed;
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        destroyed = false;
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -115,12 +96,8 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     public void onCreate(@Nullable Bundle savedInstanceState) {
         LogUtil.i("onCreate");
         super.onCreate(savedInstanceState);
-        if (openEventBus()) {
-            EventBusUtil.register(this);
-        }
-        if (openNetworkListener()) {
-            NetworkStateReceiver.getInstance().addNetworkStateChangedListener(this);
-        }
+        createEventBus();
+        createNetMonitor();
     }
 
     @Nullable
@@ -128,19 +105,23 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LogUtil.i("onCreateView");
         if (this.mRootView == null) {
-            this.mRootView = inflater.inflate(this.getContentViewId(), container, false);
+            setContentView(inflater, container);
             this.initView();
             this.initListener();
         }
         return this.mRootView;
     }
 
+    protected void setContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        this.mRootView = inflater.inflate(this.getContentViewId(), container, false);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         LogUtil.i("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
-        this.mPresenter = this.createPresenter();
         this.mIsViewPrepared = true;
+        this.isDestroyed = false;
         this.lazyLoadData();
     }
 
@@ -148,7 +129,7 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            LogUtil.i("isVisibleToUser=" + isVisibleToUser);
+            LogUtil.i("isVisibleToUser");
             this.lazyLoadData();
         }
     }
@@ -167,17 +148,14 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     public void onDestroy() {
         LogUtil.i("onDestroy");
         super.onDestroy();
+        destroyEventBus();
+        destroyNetMonitor();
         ClickUtil.clear();
-        destroyed = true;
-        if (openEventBus()) {
-            EventBusUtil.unregister(this);
-        }
-        if (openNetworkListener()) {
-            NetworkStateReceiver.getInstance().removeNetworkStateChangedListener(this);
-        }
-        if (this.mPresenter != null) {
-            this.mPresenter.onDestroy();
-        }
+        isDestroyed = true;
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 
     /**
@@ -230,12 +208,6 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
         imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    protected void setTitle(int titleId) {
-        if (getActivity() != null && getActivity() instanceof BaseActivity) {
-            getActivity().setTitle(titleId);
-        }
-    }
-
     @Override
     public void showLoading() {
     }
@@ -264,33 +236,6 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
     }
 
     /**
-     * 判断网络是否可用
-     *
-     * @return
-     */
-    protected boolean isNetAvailable() {
-        return NetworkUtil.isNetAvailable();
-    }
-
-    /**
-     * 是否打开网络监听
-     *
-     * @return
-     */
-    protected boolean openNetworkListener() {
-        return false;
-    }
-
-    /**
-     * 是否注册事件分发
-     *
-     * @return true绑定EventBus事件分发，false不绑定
-     */
-    protected boolean openEventBus() {
-        return false;
-    }
-
-    /**
      * 接收事件
      *
      * @param event
@@ -298,9 +243,7 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public <T> void onEventBusCome(Event<T> event) {
-        if (destroyed) return;
-
-        if (event != null) {
+        if (!isDestroyed() && event != null) {
             onMessageEvent(event.eventName, event.data);
         }
     }
@@ -313,31 +256,23 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public <T> void onStickyEventBusCome(Event<T> event) {
-        if (destroyed) return;
-
-        if (event != null) {
+        if (!isDestroyed() && event != null) {
             onMessageStickyEvent(event.eventName, event.data);
         }
     }
 
     /**
-     * 接收事件
-     *
-     * @param eventName
-     * @param data
-     * @param <T>
+     * 接收普通事件
      */
+    @Override
     public <T> void onMessageEvent(String eventName, T data) {
 
     }
 
     /**
      * 接收粘性事件
-     *
-     * @param eventName
-     * @param data
-     * @param <T>
      */
+    @Override
     public <T> void onMessageStickyEvent(String eventName, T data) {
 
     }

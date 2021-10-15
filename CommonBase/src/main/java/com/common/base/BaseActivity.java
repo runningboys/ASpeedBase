@@ -7,19 +7,25 @@ import android.os.Handler;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.common.base.ability.IBaseView;
+import com.common.base.ability.IEventBus;
+import com.common.base.ability.INetMonitor;
+import com.common.eventbus.Event;
 import com.common.manager.ActivityManager;
-import com.common.receiver.NetworkStateReceiver;
 import com.common.utils.ClickUtil;
-import com.common.utils.NetworkUtil;
 import com.common.utils.ToastUtil;
 import com.common.utils.UIHandler;
 import com.common.utils.log.LogUtil;
 import com.umeng.analytics.MobclickAgent;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -29,7 +35,7 @@ import androidx.fragment.app.FragmentTransaction;
  * @author LiuFeng
  * @date 2017-11-01
  */
-public abstract class BaseActivity extends EventBusActivity implements View.OnClickListener, BaseView, NetworkStateReceiver.NetworkStateChangedListener {
+public abstract class BaseActivity extends AppCompatActivity implements IEventBus, INetMonitor, IBaseView, View.OnClickListener {
 
     protected Bundle mSavedInstanceState;
     private Handler mHandler;
@@ -39,16 +45,14 @@ public abstract class BaseActivity extends EventBusActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createEventBus();
+        createNetMonitor();
         ActivityManager.getInstance().addActivity(this);
         setContentView(this.getContentViewId());
         this.mContext = this;
         this.initToolBar();
         this.initView();
         this.initListener();
-
-        if (openNetworkListener()) {
-            NetworkStateReceiver.getInstance().addNetworkStateChangedListener(this);
-        }
         this.mSavedInstanceState = savedInstanceState;
         this.initData();
     }
@@ -89,25 +93,6 @@ public abstract class BaseActivity extends EventBusActivity implements View.OnCl
      * 初始化监听器
      */
     protected void initListener() {
-    }
-
-    /**
-     * 网络状态变化回调
-     *
-     * @param isNetAvailable 网络是否可用
-     */
-    @Override
-    public void onNetworkStateChanged(boolean isNetAvailable) {
-        LogUtil.i("网络是否可用：" + isNetAvailable);
-    }
-
-    /**
-     * 判断网络是否可用
-     *
-     * @return
-     */
-    protected boolean isNetAvailable() {
-        return NetworkUtil.isNetAvailable();
     }
 
     /**
@@ -327,28 +312,69 @@ public abstract class BaseActivity extends EventBusActivity implements View.OnCl
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
     protected void onDestroy() {
         ActivityManager.getInstance().finishActivity(this);
         super.onDestroy();
+        destroyEventBus();
+        destroyNetMonitor();
         ClickUtil.clear();
         this.mDestroyed = true;
+    }
 
-        if (openNetworkListener()) {
-            NetworkStateReceiver.getInstance().removeNetworkStateChangedListener(this);
+    @Override
+    public boolean openMonitor() {
+        return false;
+    }
+
+    /**
+     * 网络状态变化回调
+     *
+     * @param isNetAvailable 网络是否可用
+     */
+    @Override
+    public void onNetworkStateChanged(boolean isNetAvailable) {
+        LogUtil.i("网络是否可用：" + isNetAvailable);
+    }
+
+    /**
+     * 接收事件
+     *
+     * @param event
+     * @param <T>
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public <T> void onEventBusCome(Event<T> event) {
+        if (!isDestroyed() && event != null) {
+            onMessageEvent(event.eventName, event.data);
         }
     }
 
     /**
-     * 是否打开网络监听
+     * 接收粘性事件
      *
-     * @return
+     * @param event
+     * @param <T>
      */
-    protected boolean openNetworkListener() {
-        return false;
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public <T> void onStickyEventBusCome(Event<T> event) {
+        if (!isDestroyed() && event != null) {
+            onMessageStickyEvent(event.eventName, event.data);
+        }
+    }
+
+    /**
+     * 接收普通事件
+     */
+    @Override
+    public <T> void onMessageEvent(String eventName, T data) {
+
+    }
+
+    /**
+     * 接收粘性事件
+     */
+    @Override
+    public <T> void onMessageStickyEvent(String eventName, T data) {
+
     }
 }

@@ -1,4 +1,4 @@
-package com.common.base;
+package com.common.base.ability;
 
 /**
  * view基类
@@ -6,7 +6,7 @@ package com.common.base;
  * @author LiuFeng
  * @date 2017-11-01
  */
-public interface BaseView {
+public interface IBaseView {
     /**
      * 显示Loading框
      */

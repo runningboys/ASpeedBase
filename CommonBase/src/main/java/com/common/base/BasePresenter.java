@@ -1,6 +1,8 @@
 package com.common.base;
 
 import android.content.Context;
+
+import com.common.base.ability.IBaseView;
 import com.common.utils.NetworkUtil;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
@@ -11,7 +13,7 @@ import rx.subscriptions.CompositeSubscription;
  * @author LiuFeng
  * @date 2017-11-01
  */
-public abstract class BasePresenter<V extends BaseView> {
+public abstract class BasePresenter<V extends IBaseView> {
 
     /**
      * 上下文

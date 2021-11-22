@@ -12,7 +12,7 @@ import com.common.utils.NetworkUtil;
 public interface INetMonitor extends NetworkStateReceiver.NetworkStateChangedListener {
 
     /**
-     * 创建事件通知
+     * 创建网络监视器
      */
     default void createNetMonitor() {
         if (openMonitor()) {
@@ -21,7 +21,7 @@ public interface INetMonitor extends NetworkStateReceiver.NetworkStateChangedLis
     }
 
     /**
-     * 销毁事件通知
+     * 销毁网络监视器
      */
     default void destroyNetMonitor() {
         if (openMonitor()) {

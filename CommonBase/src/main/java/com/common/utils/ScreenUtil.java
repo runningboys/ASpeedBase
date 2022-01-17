@@ -1,5 +1,6 @@
 package com.common.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.UiModeManager;
@@ -12,11 +13,7 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.common.CommonUtil;
-
 import java.lang.reflect.Field;
-
-import static android.content.Context.KEYGUARD_SERVICE;
 
 /**
  * 屏幕工具类
@@ -27,7 +24,7 @@ import static android.content.Context.KEYGUARD_SERVICE;
 public class ScreenUtil {
     private static final String TAG = "ScreenUtil";
 
-    private static double RATIO = 0.85;
+    private static final double RATIO = 0.85;
 
     public static int screenWidth;  // 屏幕的宽度
     public static int screenHeight; // 屏幕的高度
@@ -38,42 +35,25 @@ public class ScreenUtil {
     public static float scaleDensity;   // 缩放的密度值
     public static float xdpi;   // 在屏幕X维度的dpi值
     public static float ydpi;   // 在屏幕Y维度的dpi值
-    public static int   densityDpi; // 密度dpi值
+    public static int densityDpi; // 密度dpi值
 
     public static int dialogWidth;  // 对话框的宽度
     public static int statusBarHeight;  // 状态栏的高度
     public static int navBarHeight; // 导航条的高度
 
     static {
-        if (CommonUtil.getContext() != null) {
-            init(CommonUtil.getContext());
-        }
-        else {
-            throw new NullPointerException("Context is null, Initialize Context before using the ScreenUtil");
-        }
-    }
-
-    /**
-     * 初始化
-     *
-     * @param context
-     */
-    public static void init(Context context) {
-        if (null == context) {
-            return;
-        }
-        DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
+        DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
         screenWidth = dm.widthPixels;
         screenHeight = dm.heightPixels;
-        screenMin = (screenWidth > screenHeight) ? screenHeight : screenWidth;
-        screenMax = (screenWidth < screenHeight) ? screenHeight : screenWidth;
+        screenMin = Math.min(screenWidth, screenHeight);
+        screenMax = Math.max(screenWidth, screenHeight);
         density = dm.density;
         scaleDensity = dm.scaledDensity;
         xdpi = dm.xdpi;
         ydpi = dm.ydpi;
         densityDpi = dm.densityDpi;
-        statusBarHeight = getStatusBarHeight(context);
-        navBarHeight = getNavBarHeight(context);
+        statusBarHeight = getStatusBarHeight();
+        navBarHeight = getNavBarHeight();
         Log.d(TAG, "screenWidth=" + screenWidth + " screenHeight=" + screenHeight + " density=" + density);
     }
 
@@ -81,7 +61,6 @@ public class ScreenUtil {
      * dip转换为px
      *
      * @param dipValue
-     *
      * @return
      */
     public static int dip2px(float dipValue) {
@@ -92,7 +71,6 @@ public class ScreenUtil {
      * px转换为dip
      *
      * @param pxValue
-     *
      * @return
      */
     public static int px2dip(float pxValue) {
@@ -103,11 +81,21 @@ public class ScreenUtil {
      * sp转换为px
      *
      * @param spValue
-     *
      * @return
      */
     public static int sp2px(float spValue) {
         return (int) (spValue * scaleDensity + 0.5f);
+    }
+
+    /**
+     * px转换为sp
+     *
+     * @param pxValue
+     * @return
+     */
+    public static int px2sp(float pxValue) {
+        final float fontScale = Resources.getSystem().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
     }
 
     /**
@@ -126,9 +114,6 @@ public class ScreenUtil {
      * @return
      */
     public static int getDisplayWidth() {
-        if (screenWidth == 0) {
-            init(CommonUtil.getContext());
-        }
         return screenWidth;
     }
 
@@ -138,27 +123,22 @@ public class ScreenUtil {
      * @return
      */
     public static int getDisplayHeight() {
-        if (screenHeight == 0) {
-            init(CommonUtil.getContext());
-        }
         return screenHeight;
     }
 
     /**
      * 获取状态栏的高度
      *
-     * @param context
-     *
      * @return
      */
-    public static int getStatusBarHeight(Context context) {
+    public static int getStatusBarHeight() {
         if (statusBarHeight == 0) {
             try {
                 Class<?> c = Class.forName("com.android.internal.R$dimen");
                 Object o = c.newInstance();
                 Field field = c.getField("status_bar_height");
                 int x = (Integer) field.get(o);
-                statusBarHeight = context.getResources().getDimensionPixelSize(x);
+                statusBarHeight = Resources.getSystem().getDimensionPixelSize(x);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -172,12 +152,10 @@ public class ScreenUtil {
     /**
      * 获取导航条的高度
      *
-     * @param context
-     *
      * @return
      */
-    public static int getNavBarHeight(Context context) {
-        Resources resources = context.getResources();
+    public static int getNavBarHeight() {
+        Resources resources = Resources.getSystem();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
             return resources.getDimensionPixelSize(resourceId);
@@ -205,17 +183,17 @@ public class ScreenUtil {
      * 判断是否是锁屏状态
      *
      * @param context 上下文
-     *
      * @return true: 是<br>false: 否
      */
     public static boolean isScreenLockStatus(Context context) {
-        KeyguardManager km = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+        KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         return km.inKeyguardRestrictedInputMode();
     }
 
     /**
      * 点亮手机屏幕并解锁
      */
+    @SuppressLint("MissingPermission")
     public static void openTheScreen(Context context) {
         context = context.getApplicationContext();
         // 获取电源管理器对象
@@ -223,12 +201,12 @@ public class ScreenUtil {
         boolean screenOn = pm.isScreenOn();
         if (!screenOn) {
             // 获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
-            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "bright");
+            @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "bright");
             wl.acquire(10000); // 点亮屏幕
             wl.release(); // 释放
         }
         // 屏幕解锁
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
         // 屏幕锁定
         keyguardLock.reenableKeyguard();
@@ -287,8 +265,7 @@ public class ScreenUtil {
         UiModeManager umm = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
         if (umm.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

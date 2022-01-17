@@ -1,3 +1,4 @@
 <manifest package="com.common.base">
 
+    <uses-permission name="android.permission.DISABLE_KEYGUARD" />
 </manifest>

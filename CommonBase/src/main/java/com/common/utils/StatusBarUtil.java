@@ -31,7 +31,7 @@ public class StatusBarUtil {
      * @return
      */
     public static int getStatusBarHeight(Context context) {
-        return ScreenUtil.getStatusBarHeight(context);
+        return ScreenUtil.getStatusBarHeight();
     }
 
     /**

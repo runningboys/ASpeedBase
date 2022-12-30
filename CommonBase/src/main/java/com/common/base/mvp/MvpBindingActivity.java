@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.common.base.BaseActivity;
 import com.common.base.BasePresenter;
+import com.common.base.ability.IBaseView;
 import com.common.base.ability.IBinding;
 import com.common.base.ability.IPresenter;
 
@@ -15,7 +16,7 @@ import androidx.viewbinding.ViewBinding;
  * @author LiuFeng
  * @data 2021/9/22 16:19
  */
-public abstract class MvpBindingActivity<B extends ViewBinding, P extends BasePresenter> extends BaseActivity implements IBinding<B>, IPresenter<P> {
+public abstract class MvpBindingActivity<B extends ViewBinding, P extends BasePresenter<? extends IBaseView>> extends BaseActivity implements IBinding<B>, IPresenter<P> {
 
     protected B binding;
     protected P mPresenter;

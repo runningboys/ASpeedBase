@@ -1,4 +1,4 @@
-package com.common.base.ability;
+package com.common.base.ability
 
 /**
  * view基类
@@ -6,23 +6,23 @@ package com.common.base.ability;
  * @author LiuFeng
  * @date 2017-11-01
  */
-public interface IBaseView {
+interface IBaseView {
     /**
      * 显示Loading框
      */
-    void showLoading();
+    fun showLoading()
 
     /**
      * 隐藏Loading框
      */
-    void hideLoading();
+    fun hideLoading()
 
     /**
      * 显示消息
      *
      * @param message
      */
-    void showMessage(String message);
+    fun showMessage(message: String)
 
     /**
      * 错误处理
@@ -30,5 +30,5 @@ public interface IBaseView {
      * @param code
      * @param message
      */
-    void onError(int code, String message);
+    fun onError(code: Int, message: String?)
 }

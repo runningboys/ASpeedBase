@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.common.base.BaseFragment;
 import com.common.base.BasePresenter;
+import com.common.base.ability.IBaseView;
 import com.common.base.ability.IPresenter;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,7 @@ import androidx.annotation.Nullable;
  * @author LiuFeng
  * @data 2021/10/15 11:48
  */
-public abstract class MvpFragment<P extends BasePresenter> extends BaseFragment implements IPresenter<P> {
+public abstract class MvpFragment<P extends BasePresenter<? extends IBaseView>> extends BaseFragment implements IPresenter<P> {
     protected P mPresenter;
 
     @Override

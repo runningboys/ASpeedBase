@@ -1,7 +1,6 @@
-package com.common.base.ability;
+package com.common.base.ability
 
-import com.common.eventbus.EventBusUtil;
-
+import com.common.eventbus.EventBusUtil
 
 /**
  * EventBus集成接口
@@ -9,23 +8,22 @@ import com.common.eventbus.EventBusUtil;
  * @author LiuFeng
  * @data 2021/10/15 14:36
  */
-public interface IEventBus {
-
+interface IEventBus {
     /**
      * 创建事件通知
      */
-    default void createEventBus() {
+    fun createEventBus() {
         if (openEventBus()) {
-            EventBusUtil.register(this);
+            EventBusUtil.register(this)
         }
     }
 
     /**
      * 销毁事件通知
      */
-    default void destroyEventBus() {
+    fun destroyEventBus() {
         if (openEventBus()) {
-            EventBusUtil.unregister(this);
+            EventBusUtil.unregister(this)
         }
     }
 
@@ -34,17 +32,17 @@ public interface IEventBus {
      *
      * @return true绑定EventBus事件分发，false不绑定
      */
-    default boolean openEventBus() {
-        return true;
+    fun openEventBus(): Boolean {
+        return true
     }
 
     /**
      * 接收普通事件
      */
-    <T> void onMessageEvent(String eventName, T data);
+    fun <T> onMessageEvent(eventName: String, data: T)
 
     /**
      * 接收粘性事件
      */
-    <T> void onMessageStickyEvent(String eventName, T data);
+    fun <T> onMessageStickyEvent(eventName: String, data: T)
 }

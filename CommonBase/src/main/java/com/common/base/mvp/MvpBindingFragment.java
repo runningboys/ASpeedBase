@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.common.base.BaseFragment;
 import com.common.base.BasePresenter;
+import com.common.base.ability.IBaseView;
 import com.common.base.ability.IBinding;
 import com.common.base.ability.IPresenter;
 
@@ -19,7 +20,7 @@ import androidx.viewbinding.ViewBinding;
  * @author LiuFeng
  * @data 2021/9/22 16:19
  */
-public abstract class MvpBindingFragment<B extends ViewBinding, P extends BasePresenter> extends BaseFragment implements IBinding<B>, IPresenter<P> {
+public abstract class MvpBindingFragment<B extends ViewBinding, P extends BasePresenter<? extends IBaseView>> extends BaseFragment implements IBinding<B>, IPresenter<P> {
 
     protected B binding;
     protected P mPresenter;

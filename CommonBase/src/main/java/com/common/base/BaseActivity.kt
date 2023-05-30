@@ -40,7 +40,7 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
         super.onCreate(savedInstanceState)
         createEventBus()
         createNetMonitor()
-        ActivityManager.getInstance().addActivity(this)
+        ActivityManager.instance.addActivity(this)
         setContentView(getContentViewId())
         mContext = this
         initToolBar()
@@ -277,7 +277,7 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
     }
 
     override fun onDestroy() {
-        ActivityManager.getInstance().finishActivity(this)
+        ActivityManager.instance.finishActivity(this)
         super.onDestroy()
         destroyEventBus()
         destroyNetMonitor()

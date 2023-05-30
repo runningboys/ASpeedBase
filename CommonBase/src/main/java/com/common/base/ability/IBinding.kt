@@ -14,5 +14,5 @@ interface IBinding<B : ViewBinding> {
      *
      * @return
      */
-    val viewBinding: B
+    fun getViewBinding(): B?
 }

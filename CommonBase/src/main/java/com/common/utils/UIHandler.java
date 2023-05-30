@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 
 /**
  * UI数据刷新操作
+ *
+ * @author LiuFeng
+ * @data 2022/4/29 10:55
  */
 public class UIHandler extends Handler {
     private static final Map<Integer, Runnable> taskMap = new ConcurrentHashMap<>();
@@ -69,6 +72,19 @@ public class UIHandler extends Handler {
         }
         taskMap.put(what, runnable);
         getInstance().sendEmptyMessageDelayed(what, delayMillis);
+    }
+
+    /**
+     * 移除任务
+     *
+     * @param tag
+     */
+    public static void removeTask(String tag) {
+        int what = tag.hashCode();
+        if (taskMap.containsKey(what)) {
+            taskMap.remove(what);
+            getInstance().removeMessages(what);
+        }
     }
 
     /**

@@ -16,8 +16,6 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.Arrays
-import java.util.Collections
 
 /**
  * 磁盘文件日志操作器--写入文件
@@ -33,9 +31,6 @@ class DiskLogHandle(
     // 上次打印日志时间戳
     private var lastLogTime: Long = 0
 
-    // 上次删除文件时间戳
-    private var lastDelTime: Long = 0
-
     private val handler: Handler
     private val buffer = StringBuilder()
 
@@ -50,11 +45,8 @@ class DiskLogHandle(
         private const val EMPTY_WHAT = 100 // 空消息what
         private const val LOG_WHAT = 200 // 日志消息what
         private const val SPACE_TIME: Long = 1000 // 间隔1s打印
-        private const val ONE_DAY_TIME = 24 * 60 * 60 * 1000 // 一天的时间
         private const val MAX_CHAR_NUM = 500 * 1024 / 2 // 500kb的汉字数量
         private const val MAX_BYTES = 1024 * 1024 // 单个日志文件1Mb
-        private const val SAVE_LOG_MAX_BYTES = 100 * 1024 * 1024 // 目录保存日志文件最大100Mb
-        private const val SAVE_OF_DAYS = 15 // 日志保存天数
     }
 
     @Synchronized
@@ -119,7 +111,7 @@ class DiskLogHandle(
                 val content = msg.obj as String
 
                 // 处理文件:过期或过大
-                handleFile()
+                DiskLogManager.handleFile(mFolderPath)
 
                 // 通过时间戳生成文件名
                 val fileName =
@@ -150,72 +142,6 @@ class DiskLogHandle(
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    /**
-     * 处理文件:删除过期或过大文件
-     */
-    private fun handleFile() {
-        val currentTime = System.currentTimeMillis()
-        // 判断上次执行删除是否在一天以前
-        if (currentTime - lastDelTime > ONE_DAY_TIME) {
-            val fileList = listFilesInDir(File(mFolderPath))
-            if (!fileList.isNullOrEmpty()) {
-                try {
-                    // 按修改时间降序排序
-                    Collections.sort(fileList) { o1, o2 ->
-                        val diff = o2.lastModified() - o1.lastModified()
-                        if (diff > 0) 1 else if (diff == 0L) 0 else -1
-                    }
-                } catch (e: Exception) {
-                    Log.e(tag, "sort log files: ", e)
-                }
-
-                var totalLength: Long = 0
-                // 过期限定时间
-                val limitTime = currentTime - SAVE_OF_DAYS * ONE_DAY_TIME
-                for (file in fileList) {
-                    totalLength += file.length()
-                    // 根据过期或文件总大小判断，执行删除
-                    if (file.lastModified() < limitTime || totalLength > SAVE_LOG_MAX_BYTES) {
-                        file.delete()
-                    }
-                }
-            }
-
-            // 保存删除时间
-            lastDelTime = currentTime
-        }
-    }
-
-    /**
-     * 流出文件目录下所有文件
-     *
-     * @param dir
-     *
-     * @return
-     */
-    private fun listFilesInDir(dir: File): List<File>? {
-        if (!isDir(dir)) {
-            return null
-        }
-
-        val list: MutableList<File> = ArrayList()
-        val files = dir.listFiles()
-        if (files != null && files.isNotEmpty()) {
-            list.addAll(listOf(*files))
-        }
-        return list
-    }
-
-    /**
-     * 判断是否是目录
-     *
-     * @param file 文件
-     *
-     * @return `true`: 是<br></br>`false`: 否
-     */
-    private fun isDir(file: File?): Boolean {
-        return file != null && file.exists() && file.isDirectory
-    }
 
     /**
      * 获取日志文件--文件大小超过指定大小时新建一个文件

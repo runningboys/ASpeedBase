@@ -1,7 +1,8 @@
-package com.util.base
+package com.util.base.ui.main
 
 import com.common.base.mvp.MvpActivity
-import com.util.base.MainContract.Presenter
+import com.util.base.R
+import com.util.base.ui.main.MainContract.Presenter
 
 class MainActivity : MvpActivity<Presenter>(), MainContract.View {
 

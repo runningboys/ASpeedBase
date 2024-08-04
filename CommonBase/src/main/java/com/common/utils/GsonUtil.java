@@ -1,5 +1,7 @@
 package com.common.utils;
 
+import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -12,6 +14,12 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -19,10 +27,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  * Gson工具类
@@ -33,7 +37,8 @@ import org.json.JSONTokener;
 public class GsonUtil {
     private static final Gson gson = newGson();
 
-    private GsonUtil() {}
+    private GsonUtil() {
+    }
 
     /**
      * 创建Gson对象
@@ -43,7 +48,7 @@ public class GsonUtil {
     private static Gson newGson() {
         GsonBuilder gb = new GsonBuilder();
         gb.registerTypeAdapterFactory(new GsonTypeAdapterFactory());
-        return gb.create();
+        return gb.setLenient().create();
     }
 
     /**
@@ -53,6 +58,9 @@ public class GsonUtil {
      * @return
      */
     public static String toJson(Object object) {
+        if (object == null) {
+            return null;
+        }
         return gson.toJson(object);
     }
 
@@ -64,6 +72,9 @@ public class GsonUtil {
      * @return
      */
     public static String toJson(Object object, Type typeOfT) {
+        if (object == null) {
+            return null;
+        }
         return gson.toJson(object, typeOfT);
     }
 
@@ -76,7 +87,15 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(String jsonStr, Class<T> cls) {
-        return gson.fromJson(jsonStr, cls);
+        if (TextUtils.isEmpty(jsonStr)) {
+            return null;
+        }
+        try {
+            return gson.fromJson(jsonStr, cls);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -86,6 +105,9 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(String jsonStr, Type typeOfT) {
+        if (TextUtils.isEmpty(jsonStr)) {
+            return null;
+        }
         return gson.fromJson(jsonStr, typeOfT);
     }
 
@@ -98,7 +120,7 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(Object object, Class<T> cls) {
-        return gson.fromJson(gson.toJson(object), cls);
+        return toBean(toJson(object), cls);
     }
 
     /**
@@ -110,7 +132,7 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(Object object, Type typeOfT) {
-        return gson.fromJson(gson.toJson(object), typeOfT);
+        return toBean(toJson(object), typeOfT);
     }
 
     /**
@@ -122,7 +144,7 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(JSONObject jsonObject, Class<T> cls) {
-        return gson.fromJson(jsonObject.toString(), cls);
+        return toBean(jsonObject.toString(), cls);
     }
 
     /**
@@ -134,7 +156,7 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(JSONObject jsonObject, Type typeOfT) {
-        return gson.fromJson(jsonObject.toString(), typeOfT);
+        return toBean(jsonObject.toString(), typeOfT);
     }
 
     /**
@@ -146,7 +168,7 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(JSONArray jsonArray, Class<T> cls) {
-        return gson.fromJson(jsonArray.toString(), cls);
+        return toBean(jsonArray.toString(), cls);
     }
 
     /**
@@ -158,7 +180,7 @@ public class GsonUtil {
      * @return
      */
     public static <T> T toBean(JSONArray jsonArray, Type typeOfT) {
-        return gson.fromJson(jsonArray.toString(), typeOfT);
+        return toBean(jsonArray.toString(), typeOfT);
     }
 
     /**
@@ -170,7 +192,7 @@ public class GsonUtil {
      */
     public static JSONObject toJSONObject(Object object) {
         try {
-            return new JSONObject(gson.toJson(object));
+            return new JSONObject(toJson(object));
         } catch (Exception e) {
             return null;
         }
@@ -242,7 +264,8 @@ public class GsonUtil {
      * @return
      */
     public static <T> List<T> toList(String jsonStr) {
-        return toBean(jsonStr, new TypeToken<List<T>>() {}.getType());
+        return toBean(jsonStr, new TypeToken<List<T>>() {
+        }.getType());
     }
 
     /**
@@ -252,7 +275,8 @@ public class GsonUtil {
      * @return
      */
     public static <T> Map<String, T> toMap(String jsonStr) {
-        return toBean(jsonStr, new TypeToken<Map<String, T>>() {}.getType());
+        return toBean(jsonStr, new TypeToken<Map<String, T>>() {
+        }.getType());
     }
 
     /**

@@ -24,7 +24,7 @@ public class SkinPreUtil {
      * @param skinItem
      */
     public static void setSkin(SkinItem skinItem) {
-        spManager.setString(KEY_SKIN_NAME, GsonUtil.toJson(skinItem));
+        spManager.putString(KEY_SKIN_NAME, GsonUtil.toJson(skinItem));
     }
 
     /**

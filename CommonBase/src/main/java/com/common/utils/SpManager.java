@@ -65,7 +65,7 @@ public class SpManager {
     /**
      * 设置String--基础方法
      */
-    public void setString(@NonNull String key, String value) {
+    public void putString(@NonNull String key, String value) {
         sp.edit().putString(key, value).apply();
     }
 
@@ -79,7 +79,7 @@ public class SpManager {
     /**
      * 设置Boolean--基础方法
      */
-    public void setBoolean(@NonNull String key, boolean value) {
+    public void putBoolean(@NonNull String key, boolean value) {
         sp.edit().putBoolean(key, value).apply();
     }
 
@@ -93,7 +93,7 @@ public class SpManager {
     /**
      * 设置Int--基础方法
      */
-    public void setInt(@NonNull String key, int value) {
+    public void putInt(@NonNull String key, int value) {
         sp.edit().putInt(key, value).apply();
     }
 
@@ -107,7 +107,7 @@ public class SpManager {
     /**
      * 设置Long--基础方法
      */
-    public void setLong(@NonNull String key, long value) {
+    public void putLong(@NonNull String key, long value) {
         sp.edit().putLong(key, value).apply();
     }
 

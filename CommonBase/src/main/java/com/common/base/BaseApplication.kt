@@ -15,7 +15,7 @@ import com.common.utils.log.LogUtil
  * @author LiuFeng
  * @date 2017-11-01
  */
-class BaseApplication : MultiDexApplication(), ActivityLifecycleCallbacks {
+open class BaseApplication : MultiDexApplication(), ActivityLifecycleCallbacks {
     // activity计数器
     private var mActivityCount = 0
 

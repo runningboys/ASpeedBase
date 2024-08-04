@@ -101,7 +101,7 @@ public class NetTimeUtil {
                 }
 
                 // 存到sp
-                spManager.setLong(KEY_OFFSET_TIME, offsetTime);
+                spManager.putLong(KEY_OFFSET_TIME, offsetTime);
                 LogUtil.i(TAG, "calculateOffsetTime --> offsetTime:" + offsetTime);
             }
         });

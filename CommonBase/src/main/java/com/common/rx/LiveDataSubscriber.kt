@@ -1,10 +1,7 @@
 package com.common.rx
 
 import androidx.lifecycle.MutableLiveData
-import com.common.api.NetResult
-import com.common.api.NetResult.Companion.complete
-import com.common.api.NetResult.Companion.failed
-import com.common.api.NetResult.Companion.success
+import com.common.data.NetResult
 import rx.Observer
 
 /**
@@ -21,15 +18,15 @@ class LiveDataSubscriber<T>(liveData: MutableLiveData<NetResult<T?>>) : Observer
     }
 
     override fun onNext(t: T) {
-        liveData.value = success(t)
+        liveData.value = NetResult.success(t)
     }
 
     override fun onError(e: Throwable) {
         val message = e.message
-        liveData.value = failed<T>(0, message)
+        liveData.value = NetResult.failed<T>(0, message)
     }
 
     override fun onCompleted() {
-        liveData.value = complete<T>()
+        liveData.value = NetResult.complete<T>()
     }
 }

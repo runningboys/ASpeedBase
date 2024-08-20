@@ -4,10 +4,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import androidx.annotation.NonNull;
 
 /**
  * UI数据刷新操作

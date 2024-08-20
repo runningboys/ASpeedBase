@@ -32,7 +32,7 @@ public class NetTimeUtil {
     private static final Map<String, Boolean> webUrlMap = new HashMap<>();
 
     // sp数据持久化
-    private static final SpManager spManager = SpManager.of(CommonUtil.getContext(), NET_TIME_NAME);
+    private static final SpManager spManager = SpManager.of(NET_TIME_NAME);
 
     static {
         webUrlMap.put("http://www.baidu.com", false);  //百度

@@ -2,8 +2,10 @@ package com.common.rx;
 
 import com.common.utils.log.LogUtil;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+
 
 /**
  * 数据库的订阅Action
@@ -11,18 +13,18 @@ import rx.Subscriber;
  * @author LiuFeng
  * @data 2020/2/8 11:36
  */
-public abstract class OnSubscribe<T> implements Observable.OnSubscribe<T> {
+public abstract class OnSubscribe<T> implements ObservableOnSubscribe<T> {
 
     @Override
-    public void call(Subscriber<? super T> subscriber) {
+    public void subscribe(@NonNull ObservableEmitter<T> emitter) throws Throwable {
         try {
             T t = get();
-            subscriber.onNext(t);
+            emitter.onNext(t);
         } catch (Exception e) {
-            subscriber.onError(e);
+            emitter.onError(e);
             LogUtil.e(e);
         } finally {
-            subscriber.onCompleted();
+            emitter.onComplete();
         }
     }
 

@@ -7,7 +7,6 @@ import android.text.TextUtils
 import com.common.utils.AppUtil
 import com.common.utils.DeviceUtil
 import com.common.utils.log.LogUtil
-import com.umeng.analytics.MobclickAgent
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -109,7 +108,6 @@ object AppCrashHandler : Thread.UncaughtExceptionHandler {
      * @param ex
      */
     private fun uploadExceptionToServer(ex: Throwable) {
-        // 上传到友盟
-        MobclickAgent.reportError(mContext, ex)
+
     }
 }

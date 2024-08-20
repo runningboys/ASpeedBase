@@ -15,7 +15,7 @@ import com.common.utils.SpManager;
 public class SkinPreUtil {
     private static final String SKIN_PRE_NAME = "skin_plugin";
     private static final String KEY_SKIN_NAME = "key_skin_name";
-    private static final SpManager spManager = SpManager.of(CommonUtil.getContext(), SKIN_PRE_NAME);
+    private static final SpManager spManager = SpManager.of(SKIN_PRE_NAME);
 
 
     /**

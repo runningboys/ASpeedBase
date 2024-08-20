@@ -1,28 +1,24 @@
 package com.common.base
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import com.common.base.ability.IEventBus
-import com.common.base.ability.INetMonitor
-import com.common.base.ability.IBaseView
-import android.os.Bundle
-import androidx.annotation.LayoutRes
-import com.common.utils.ClickUtil
-import com.common.utils.ToastUtil
-import com.common.utils.log.LogUtil
-import com.common.utils.UIHandler
-import com.common.base.BaseFragment
-import com.umeng.analytics.MobclickAgent
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.common.eventbus.Event
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
+import com.common.base.ability.IBaseView
+import com.common.base.ability.IEventBus
+import com.common.base.ability.INetMonitor
 import com.common.manager.ActivityManager
+import com.common.utils.ClickUtil
+import com.common.utils.ToastUtil
+import com.common.utils.UIHandler
+import com.common.utils.eventbus.Event
+import com.common.utils.log.LogUtil
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.lang.Exception
-import java.util.ArrayList
 
 /**
  * 基础的activity
@@ -115,19 +111,6 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
     }
 
     /**
-     * 获取主Handler
-     *
-     * @return 主线程Handler
-     */
-    protected val handler: Handler?
-        protected get() {
-            if (mHandler == null) {
-                mHandler = UIHandler.getInstance()
-            }
-            return mHandler
-        }
-
-    /**
      * 是否需要弹出键盘
      *
      * @param isShow true为弹出键盘
@@ -154,7 +137,7 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
      */
     protected fun showKeyboardDelayed(focus: View?) {
         focus?.requestFocus()
-        handler!!.postDelayed({
+       UIHandler.run({
             if (focus == null || focus.isFocused) {
                 showKeyboard(true)
             }
@@ -256,16 +239,6 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MobclickAgent.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        MobclickAgent.onPause(this)
     }
 
     override fun isDestroyed(): Boolean {

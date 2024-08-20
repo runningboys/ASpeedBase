@@ -1,6 +1,6 @@
 package com.common.base.ability
 
-import com.common.eventbus.EventBusUtil
+import com.common.utils.eventbus.EventBusUtil
 
 /**
  * EventBus集成接口

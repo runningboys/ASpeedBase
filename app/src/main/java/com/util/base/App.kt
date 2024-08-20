@@ -1,8 +1,8 @@
 package com.util.base
 
 import com.common.base.BaseApplication
-import com.database.DBHelper
-import com.util.base.data.AppSp
+import com.data.database.DBHelper
+import com.data.sp.AppSp
 
 
 class App : BaseApplication() {

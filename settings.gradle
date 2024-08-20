@@ -1,4 +1,5 @@
 include ':app'
+include ':data'
 include ':CommonBase'
-include ':database'
 rootProject.name = "ASpeedBase"
+

@@ -11,6 +11,9 @@ import androidx.core.app.ActivityCompat;
 
 import android.telephony.TelephonyManager;
 import android.util.TypedValue;
+
+import com.common.CommonUtil;
+
 import java.util.UUID;
 
 /**
@@ -21,17 +24,6 @@ import java.util.UUID;
  */
 public class DeviceUtil {
 
-    private static String[] huaweiRongyao = {
-        "hwH60",    //荣耀6
-        "hwPE",     //荣耀6 plus
-        "hwH30",    //3c
-        "hwHol",    //3c畅玩版
-        "hwG750",   //3x
-        "hw7D",      //x1
-        "hwChe2",      //x1
-    };
-
-    private static String[] SanXing = { "SM-N9200" };
 
     /**
      * 获取设备的唯一标识，deviceId
@@ -142,58 +134,37 @@ public class DeviceUtil {
         return Build.DEVICE;
     }
 
-    public static boolean isHuaWeiRongyao() {
-        for (String aHuaweiRongyao : huaweiRongyao) {
-            if (aHuaweiRongyao.equals(getDeviceModel())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isSanXingNot5() {
-        for (String aSanXing : SanXing) {
-            if (aSanXing.equals(getPhoneModel())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * dp转px
      *
-     * @param context
      *
      * @return
      */
 
-    public static int dp2px(Context context, float dpVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, context.getResources().getDisplayMetrics());
+    public static int dp2px(float dpVal) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, getContext().getResources().getDisplayMetrics());
     }
 
     /**
      * sp转px
      *
-     * @param context
      *
      * @return
      */
-    public static int sp2px(Context context, float spVal) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal, context.getResources().getDisplayMetrics());
+    public static int sp2px(float spVal) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal, getContext().getResources().getDisplayMetrics());
     }
 
     /**
      * px转dp
      *
-     * @param context
      * @param pxVal
      *
      * @return
      */
 
-    public static float px2dp(Context context, float pxVal) {
-        final float scale = context.getResources().getDisplayMetrics().density;
+    public static float px2dp(float pxVal) {
+        final float scale = getContext().getResources().getDisplayMetrics().density;
         return (pxVal / scale);
     }
 
@@ -204,7 +175,12 @@ public class DeviceUtil {
      *
      * @return
      */
-    public static float px2sp(Context context, float pxVal) {
-        return (pxVal / context.getResources().getDisplayMetrics().scaledDensity);
+    public static float px2sp(float pxVal) {
+        return (pxVal / getContext().getResources().getDisplayMetrics().scaledDensity);
+    }
+
+
+    private static Context getContext() {
+        return CommonUtil.getContext();
     }
 }

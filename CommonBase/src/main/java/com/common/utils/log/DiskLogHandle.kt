@@ -107,7 +107,7 @@ class DiskLogHandle(
             }
 
             // 判断写入权限
-            if (checkPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (hasStoragePermission(mContext)) {
                 val content = msg.obj as String
 
                 // 处理文件:过期或过大
@@ -130,16 +130,27 @@ class DiskLogHandle(
      *
      * @return
      */
-    private fun checkPermission(context: Context?, permission: String): Boolean {
-        if (context == null) {
-            return false
-        }
-        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+    private fun hasStoragePermission(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             true
-        } else ContextCompat.checkSelfPermission(
-            context,
-            permission
-        ) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        }
+
+        val perms = arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_AUDIO,
+                Manifest.permission.READ_MEDIA_VIDEO
+        )
+        for (perm in perms) {
+            if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+
+        return true
     }
 
 

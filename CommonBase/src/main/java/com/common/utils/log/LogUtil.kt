@@ -2,8 +2,6 @@ package com.common.utils.log
 
 import android.content.Context
 import android.text.TextUtils
-import com.common.utils.log.StackTraceUtil.getCroppedStackTraceString
-import com.common.utils.log.StackTraceUtil.getStackTraceString
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -75,7 +73,7 @@ object LogUtil {
      */
     @JvmStatic
     fun i(msg: String, maxDepth: Int) {
-        commonLog(LogLevel.INFO, "", """$msg${getCroppedStackTraceString(maxDepth)}""".trimIndent())
+        commonLog(LogLevel.INFO, "", """$msg${StackTraceUtil.getCroppedStackTraceString(maxDepth)}""".trimIndent())
     }
 
     /**
@@ -87,7 +85,7 @@ object LogUtil {
      */
     @JvmStatic
     fun i(tag: String, msg: String, maxDepth: Int) {
-        commonLog(LogLevel.INFO, tag, """$msg${getCroppedStackTraceString(maxDepth)}""".trimIndent())
+        commonLog(LogLevel.INFO, tag, """$msg${StackTraceUtil.getCroppedStackTraceString(maxDepth)}""".trimIndent())
     }
 
     /**
@@ -164,7 +162,7 @@ object LogUtil {
      */
     @JvmStatic
     fun e(tag: String, msg: String, stackTrace: Array<StackTraceElement>, start: Int, maxDepth: Int) {
-        commonLog(LogLevel.ERROR, tag, """$msg${getCroppedStackTraceString(stackTrace, start, maxDepth)}""".trimIndent())
+        commonLog(LogLevel.ERROR, tag, """$msg${StackTraceUtil.getCroppedStackTraceString(stackTrace, start, maxDepth)}""".trimIndent())
     }
 
     /**
@@ -176,7 +174,7 @@ object LogUtil {
      */
     @JvmStatic
     fun e(tag: String, msg: String, maxDepth: Int) {
-        commonLog(LogLevel.ERROR, tag, """$msg${getCroppedStackTraceString(maxDepth)}""".trimIndent())
+        commonLog(LogLevel.ERROR, tag, """$msg${StackTraceUtil.getCroppedStackTraceString(maxDepth)}""".trimIndent())
     }
 
     /**
@@ -410,7 +408,7 @@ object LogUtil {
      * @return
      */
     private fun getExceptionLog(msg: String, throwable: Throwable): String {
-        return """$msg Caught exception: ${getStackTraceString(throwable)}""".trimIndent()
+        return """$msg Caught exception: ${StackTraceUtil.getStackTraceString(throwable)}""".trimIndent()
     }
 
     /**

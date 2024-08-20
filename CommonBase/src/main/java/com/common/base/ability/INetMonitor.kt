@@ -16,7 +16,7 @@ interface INetMonitor : NetworkStateChangedListener {
      */
     fun createNetMonitor() {
         if (openMonitor()) {
-            NetworkStateReceiver.getInstance().addNetworkStateChangedListener(this)
+            NetworkStateReceiver.instance.addListener(this)
         }
     }
 
@@ -25,7 +25,7 @@ interface INetMonitor : NetworkStateChangedListener {
      */
     fun destroyNetMonitor() {
         if (openMonitor()) {
-            NetworkStateReceiver.getInstance().removeNetworkStateChangedListener(this)
+            NetworkStateReceiver.instance.removeListener(this)
         }
     }
 

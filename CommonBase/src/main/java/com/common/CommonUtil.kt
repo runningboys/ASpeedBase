@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import com.common.receiver.NetworkStateReceiver
-import com.common.router.RouterUtil
+import com.common.utils.RouterUtil
 
 /**
  * Util初始化管理类
@@ -33,7 +33,7 @@ object CommonUtil {
         RouterUtil.init(application)
 
         // 注册网络状态变化广播接收器
-        NetworkStateReceiver.getInstance().register(context)
+        NetworkStateReceiver.instance.register(context)
     }
 
     @JvmStatic

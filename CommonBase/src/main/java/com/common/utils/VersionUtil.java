@@ -4,9 +4,6 @@ import android.text.TextUtils;
 
 /**
  * 版本比较工具类
- *
- * @author LiuFeng
- * @data 2021/8/26 10:57
  */
 public class VersionUtil {
 

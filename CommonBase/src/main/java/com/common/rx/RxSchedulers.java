@@ -5,10 +5,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import rx.Observable;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * rx线程调度工具类
@@ -53,7 +53,7 @@ public class RxSchedulers {
      * @param <T>
      * @return
      */
-    public static <T> Observable.Transformer<T, T> io_main() {
+    /*public static <T> Observable.Transformer<T, T> io_main() {
         return tObservable -> tObservable.subscribeOn(io()).unsubscribeOn(io()).observeOn(mainThread());
-    }
+    }*/
 }

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.util.base"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,52 @@ android {
         viewBinding true
         dataBinding true
     }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+
+            res {
+                srcDir 'src/main/res'
+            }
+            jniLibs.srcDirs = ['libs']
+        }
+
+    }
+
+
+    /*flavorDimensions 'api'
+    // 多渠道打包
+    productFlavors {
+        Official {
+            resValue "string", "app_name", "ASpeeder"
+            buildConfigField 'String', "ServerEnv", '"Release"'
+        }
+
+        Beta {
+            resValue "string", "app_name", "ASpeeder_Beta"
+            buildConfigField 'String', "ServerEnv", '"Beta"'
+        }
+
+        Dev {
+            resValue "string", "app_name", "ASpeeder_Dev"
+            buildConfigField 'String', "ServerEnv", '"Develop"'
+        }
+
+
+        Google {
+            resValue "string", "app_name", "ASpeeder"
+            buildConfigField 'String', "ServerEnv", '"OFFICIAL"'
+        }
+
+        Tencent {
+            resValue "string", "app_name", "ASpeeder"
+            buildConfigField 'String', "ServerEnv", '"OFFICIAL"'
+        }
+    }*/
+
 }
 
 dependencies {

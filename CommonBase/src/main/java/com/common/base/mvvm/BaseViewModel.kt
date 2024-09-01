@@ -1,4 +1,4 @@
-package com.common.base
+package com.common.base.mvvm
 
 import androidx.lifecycle.ViewModel
 

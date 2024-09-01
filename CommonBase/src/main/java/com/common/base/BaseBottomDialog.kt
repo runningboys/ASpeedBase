@@ -17,7 +17,6 @@ import androidx.fragment.app.DialogFragment
  * @data 2021/10/15 15:47
  */
 abstract class BaseBottomDialog : DialogFragment() {
-    protected var mRootView: View? = null
 
     override fun onStart() {
         super.onStart()
@@ -41,31 +40,17 @@ abstract class BaseBottomDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (mRootView == null) {
-            setContentView(inflater, container)
-            initView()
-            initListener()
-        }
-        return mRootView
-    }
-
-    protected open fun setContentView(inflater: LayoutInflater, container: ViewGroup?) {
-        mRootView = inflater.inflate(layoutId, null, false)
+        return inflater.inflate(getLayoutId(), null, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
+        initListener()
         initData()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (mRootView != null && mRootView!!.parent != null) {
-            (mRootView!!.parent as ViewGroup).removeView(mRootView)
-        }
-    }
-
-    protected abstract val layoutId: Int
+    protected abstract fun getLayoutId(): Int
 
     protected abstract fun initView()
 

@@ -3,9 +3,7 @@ package com.common.base.mvp
 import android.os.Bundle
 import android.view.View
 import com.common.base.BaseFragment
-import com.common.base.BasePresenter
 import com.common.base.ability.IBaseView
-import com.common.base.ability.IPresenter
 
 /**
  * MVP模式Fragment
@@ -14,7 +12,7 @@ import com.common.base.ability.IPresenter
  * @data 2021/10/15 11:48
  */
 abstract class MvpFragment<P : BasePresenter<out IBaseView>> : BaseFragment(), IPresenter<P> {
-    protected var mPresenter: P? = null
+    protected lateinit var mPresenter: P
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = createPresenter()
@@ -23,6 +21,6 @@ abstract class MvpFragment<P : BasePresenter<out IBaseView>> : BaseFragment(), I
 
     override fun onDestroy() {
         super.onDestroy()
-        mPresenter?.onDestroy()
+        mPresenter.onDestroy()
     }
 }

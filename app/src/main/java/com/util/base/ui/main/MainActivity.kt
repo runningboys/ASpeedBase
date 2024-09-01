@@ -1,25 +1,30 @@
 package com.util.base.ui.main
 
-import com.common.base.mvp.MvpActivity
-import com.util.base.R
-import com.util.base.ui.main.MainContract.Presenter
+import com.common.base.mvp.MvpBindingActivity
+import com.util.base.databinding.ActivityMainBinding
 
-class MainActivity : MvpActivity<Presenter>(), MainContract.View {
 
-    override fun getContentViewId(): Int {
-        return R.layout.activity_main
-    }
+class MainActivity : MvpBindingActivity<MainContract.Presenter, ActivityMainBinding>(), MainContract.View {
 
-    override fun createPresenter(): Presenter {
+    override fun createPresenter(): MainContract.Presenter {
         return MainPresenter(this, this)
     }
 
-    override fun initData() {
-        mPresenter?.refreshToken()
+    override fun initView() {
+        binding.titleTv.text = "MainActivity"
     }
 
+    override fun initListener() {
 
-    override fun showTips(message: String) {}
+    }
+
+    override fun initData() {
+        mPresenter.queryContacts()
+    }
+
+    override fun onContacts() {
+
+    }
 
 
 }

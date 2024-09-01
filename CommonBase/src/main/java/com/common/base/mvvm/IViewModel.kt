@@ -1,4 +1,4 @@
-package com.common.base.ability
+package com.common.base.mvvm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,13 +10,13 @@ import androidx.lifecycle.ViewModelStoreOwner
  * @author LiuFeng
  * @data 2021/10/15 14:47
  */
-interface IViewModel<V : ViewModel> : ViewModelStoreOwner {
+interface IViewModel<VM : ViewModel> : ViewModelStoreOwner {
     /**
      * 创建ViewModel
      *
      * @return
      */
-    fun createViewModel(): V
+    fun createViewModel(): VM
 
     /**
      * 创建ViewModel
@@ -25,7 +25,7 @@ interface IViewModel<V : ViewModel> : ViewModelStoreOwner {
      * @param <T>
      * @return
      */
-    fun createViewModel(clazz: Class<V>): V {
+    fun createViewModel(clazz: Class<VM>): VM {
         return ViewModelProvider(this).get(clazz)
     }
 }

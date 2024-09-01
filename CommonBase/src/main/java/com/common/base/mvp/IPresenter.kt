@@ -1,6 +1,6 @@
-package com.common.base.ability
+package com.common.base.mvp
 
-import com.common.base.BasePresenter
+import com.common.base.ability.IBaseView
 
 /**
  * Presenter集成接口

@@ -1,18 +1,17 @@
 package com.common.base
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.common.base.ability.IBaseView
 import com.common.base.ability.IEventBus
 import com.common.base.ability.INetMonitor
-import com.common.utils.eventbus.Event
 import com.common.utils.ClickUtil
+import com.common.utils.eventbus.Event
 import com.common.utils.log.LogUtil
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -23,9 +22,8 @@ import org.greenrobot.eventbus.ThreadMode
  * @author LiuFeng
  * @date 2017-11-01
  */
-abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, View.OnClickListener {
-    protected var mRootView: View? = null
-    protected var mActivity: Activity? = null
+abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView {
+    protected lateinit var mActivity: AppCompatActivity
 
     //fragment布局资源id
     var containerId = 0
@@ -36,14 +34,13 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, Vie
     // 标识已经触发过懒加载数据
     private var mHasLoadData = false
     var isDestroyed = false
-        private set
 
     /**
      * 获取布局文件id
      *
      * @return
      */
-    protected abstract val contentViewId: Int
+    protected abstract fun getLayoutId(): Int
 
     /**
      * 初始化组件
@@ -60,15 +57,10 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, Vie
      */
     protected fun initData() {}
 
-    /**
-     * 点击事件
-     *
-     * @param v
-     */
-    override fun onClick(v: View) {}
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mActivity = context as Activity
+        mActivity = context as AppCompatActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,16 +76,7 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, Vie
         savedInstanceState: Bundle?
     ): View? {
         LogUtil.i("onCreateView")
-        if (mRootView == null) {
-            setContentView(inflater, container)
-            initView()
-            initListener()
-        }
-        return mRootView
-    }
-
-    protected open fun setContentView(inflater: LayoutInflater, container: ViewGroup?) {
-        mRootView = inflater.inflate(contentViewId, container, false)
+        return inflater.inflate(getLayoutId(), container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,6 +84,8 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, Vie
         super.onViewCreated(view, savedInstanceState)
         mIsViewPrepared = true
         isDestroyed = false
+        initView()
+        initListener()
         lazyLoadData()
     }
 
@@ -115,9 +100,6 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, Vie
     override fun onDestroyView() {
         LogUtil.i("onDestroyView")
         super.onDestroyView()
-        if (mRootView != null && mRootView!!.parent != null) {
-            (mRootView!!.parent as ViewGroup).removeView(mRootView)
-        }
         mIsViewPrepared = false
     }
 
@@ -140,33 +122,6 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView, Vie
             LogUtil.i("initData")
             initData()
         }
-    }
-
-    protected fun showKeyboard(isShow: Boolean) {
-        val activity = activity ?: return
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            ?: return
-        if (isShow) {
-            if (activity.currentFocus == null) {
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-            } else {
-                imm.showSoftInput(activity.currentFocus, 0)
-            }
-        } else {
-            if (activity.currentFocus != null) {
-                imm.hideSoftInputFromWindow(
-                    activity.currentFocus!!.windowToken,
-                    InputMethodManager.HIDE_NOT_ALWAYS
-                )
-            }
-        }
-    }
-
-    protected fun hideKeyboard(view: View) {
-        val activity = activity ?: return
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            ?: return
-        imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     override fun showLoading() {}

@@ -1,4 +1,4 @@
-package com.common.base
+package com.common.base.mvp
 
 import android.content.Context
 import com.common.base.ability.IBaseView

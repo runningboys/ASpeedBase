@@ -1,7 +1,7 @@
 package com.data.database.db
 
 import androidx.room.TypeConverter
-import com.common.utils.GsonUtil
+import com.common.utils.serialization.GsonUtil
 
 /**
  * 用于room表字段的转换器

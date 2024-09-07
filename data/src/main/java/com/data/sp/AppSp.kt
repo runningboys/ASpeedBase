@@ -1,7 +1,6 @@
 package com.data.sp
 
-import com.common.CommonUtil
-import com.common.utils.SpManager
+import com.common.utils.store.SpManager
 
 /**
  * 应用数据（全局多用户共享数据）

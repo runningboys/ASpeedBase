@@ -2,7 +2,7 @@ package com.common.base.ability
 
 import com.common.receiver.NetworkStateReceiver.NetworkStateChangedListener
 import com.common.receiver.NetworkStateReceiver
-import com.common.utils.NetworkUtil
+import com.common.utils.network.NetworkUtil
 
 /**
  * 联网状态监视器接口

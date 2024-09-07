@@ -1,10 +1,9 @@
 package com.common.skin.impl;
 
 
-import com.common.CommonUtil;
 import com.common.skin.api.SkinItem;
-import com.common.utils.GsonUtil;
-import com.common.utils.SpManager;
+import com.common.utils.serialization.GsonUtil;
+import com.common.utils.store.SpManager;
 
 /**
  * 皮肤偏好设置

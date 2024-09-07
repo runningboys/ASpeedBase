@@ -7,13 +7,10 @@ import com.common.base.mvp.BasePresenter
 interface MainContract {
 
     interface View : IBaseView {
-        fun onContacts()
+        fun onLogin()
     }
 
     abstract class Presenter(context: Context, view: View) : BasePresenter<View>(context, view) {
-        /**
-         * 查询联系人
-         */
-        abstract fun queryContacts()
+        abstract fun login(phone: String, password: String)
     }
 }

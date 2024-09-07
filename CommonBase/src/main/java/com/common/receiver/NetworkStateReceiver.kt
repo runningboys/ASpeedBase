@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import com.common.utils.NetworkUtil
+import com.common.utils.network.NetworkUtil
 
 /**
  * 网络状态广播接收者

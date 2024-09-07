@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.common.utils.AppUtil;
-import com.common.utils.MD5Util;
+import com.common.utils.resource.AppUtil;
+import com.common.utils.encryption.MD5Util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;

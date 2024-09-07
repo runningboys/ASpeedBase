@@ -1,6 +1,6 @@
 package com.data.cache.user
 
-import com.data.network.api.model.UserBean
+import com.data.network.model.UserBean
 import java.util.concurrent.ConcurrentHashMap
 
 /**

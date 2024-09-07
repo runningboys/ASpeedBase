@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
 
-import com.common.utils.AppUtil;
+import com.common.utils.resource.AppUtil;
 
 
 /**

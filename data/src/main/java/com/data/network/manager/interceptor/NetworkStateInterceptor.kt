@@ -1,6 +1,7 @@
 package com.data.network.manager.interceptor
 
-import com.common.utils.NetworkUtil
+import com.common.data.NoNetworkException
+import com.common.utils.network.NetworkUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -15,7 +16,7 @@ class NetworkStateInterceptor : Interceptor {
 
         // 无网络处理
         if (!NetworkUtil.isNetAvailable()) {
-            throw NoNetException()
+            throw NoNetworkException()
         }
 
         return chain.proceed(builder.build())

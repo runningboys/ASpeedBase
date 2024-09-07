@@ -1,7 +1,7 @@
 package com.common.utils.fetcher;
 
-import com.common.utils.ThreadUtil;
-import com.common.utils.UIHandler;
+import com.common.utils.thread.ThreadUtil;
+import com.common.utils.thread.UIHandler;
 import com.common.utils.log.LogUtil;
 
 import org.w3c.dom.Element;

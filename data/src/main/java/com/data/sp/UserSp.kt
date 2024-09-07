@@ -1,6 +1,6 @@
 package com.data.sp
 
-import com.common.utils.SpManager
+import com.common.utils.store.SpManager
 
 /**
  * 用户数据（每个用户数据独立）

@@ -12,17 +12,18 @@ import com.common.data.NetStatus
  * @data 2020/4/28 17:55
  */
 abstract class UIObserver<T>(private val view: IBaseView?) : Observer<NetResult<T>> {
-    override fun onChanged(tNetResult: NetResult<T>) {
-        when (tNetResult.status) {
+    override fun onChanged(result: NetResult<T>) {
+        when (result.status) {
             NetStatus.Loading -> showLoading()
+
             NetStatus.Success -> {
                 hideLoading()
-                onSucceed(tNetResult.data)
+                onSucceed(result.data!!)
             }
 
             NetStatus.Failed -> {
                 hideLoading()
-                onFailed(tNetResult.code, tNetResult.desc)
+                onFailed(result.code, result.desc)
             }
 
             NetStatus.Complete -> hideLoading()
@@ -38,6 +39,7 @@ abstract class UIObserver<T>(private val view: IBaseView?) : Observer<NetResult<
     }
 
     protected abstract fun onSucceed(result: T)
+
     protected fun onFailed(code: Int, desc: String?) {
         view?.onError(code, desc)
     }

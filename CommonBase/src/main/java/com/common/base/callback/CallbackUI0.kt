@@ -1,6 +1,6 @@
 package com.common.base.callback
 
-import com.common.utils.UIHandler
+import com.common.utils.thread.UIHandler
 
 /**
  * 0个参数，参数接口回调到UI线程

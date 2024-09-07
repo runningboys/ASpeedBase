@@ -7,9 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.common.base.ability.IBaseView
 import com.common.base.ability.IEventBus
 import com.common.base.ability.INetMonitor
-import com.common.manager.ActivityManager
-import com.common.utils.ClickUtil
-import com.common.utils.ToastUtil
+import com.common.utils.ui.ActivityManager
+import com.common.utils.ui.ClickUtil
+import com.common.utils.ui.ToastUtil
 import com.common.utils.eventbus.Event
 import com.common.utils.log.LogUtil
 import org.greenrobot.eventbus.Subscribe

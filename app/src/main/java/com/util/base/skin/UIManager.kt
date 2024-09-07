@@ -2,13 +2,13 @@ package com.util.base.skin
 
 import android.os.Environment
 import android.text.TextUtils
-import com.common.CommonUtil
+import com.common.base.BaseApp
 import com.common.skin.api.SkinAutoChange
 import com.common.skin.api.SkinItem
 import com.common.skin.api.SkinManager
 import com.common.skin.api.SkinType
-import com.common.utils.AppUtil
-import com.common.utils.AssetUtil
+import com.common.utils.resource.AppUtil
+import com.common.utils.resource.AssetUtil
 import com.util.base.R
 import java.io.File
 
@@ -90,7 +90,7 @@ object UIManager {
      * @return
      */
     private fun getPluginPath(name: String): String {
-        val root = CommonUtil.getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val root = BaseApp.context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         val appDir = File(root, "skin")
         val fileName = "$name.skin"
         val skinFile = File(appDir, fileName)

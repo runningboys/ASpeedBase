@@ -2,9 +2,17 @@ package com.common.base.mvp
 
 import android.content.Context
 import com.common.base.ability.IBaseView
-import com.common.utils.NetworkUtil
+import com.common.utils.network.NetworkUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * presenter基类
@@ -43,6 +51,23 @@ abstract class BasePresenter<V : IBaseView>(
     protected val isNetAvailable: Boolean = NetworkUtil.isNetAvailable()
 
     /**
+     * 协程作用域
+     */
+    private var viewScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+
+    /**
+     * 启动协程
+     */
+    protected fun launch(
+            context: CoroutineContext = EmptyCoroutineContext,
+            start: CoroutineStart = CoroutineStart.DEFAULT,
+            block: suspend CoroutineScope.() -> Unit
+    ) {
+        viewScope.launch(context, start, block)
+    }
+
+    /**
      * 添加订阅
      *
      * @param subscription
@@ -79,6 +104,7 @@ abstract class BasePresenter<V : IBaseView>(
      */
     fun onDestroy() {
         unSubscribe()
+        viewScope.cancel()
         mContext = null
         mView = null
     }

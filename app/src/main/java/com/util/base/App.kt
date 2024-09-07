@@ -1,11 +1,11 @@
 package com.util.base
 
-import com.common.base.BaseApplication
+import com.common.base.BaseApp
 import com.data.database.DBHelper
 import com.data.sp.AppSp
 
 
-class App : BaseApplication() {
+class App : BaseApp() {
 
     override fun onCreate() {
         super.onCreate()

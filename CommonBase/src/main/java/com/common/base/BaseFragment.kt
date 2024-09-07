@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.common.base.ability.IBaseView
 import com.common.base.ability.IEventBus
 import com.common.base.ability.INetMonitor
-import com.common.utils.ClickUtil
+import com.common.utils.ui.ClickUtil
 import com.common.utils.eventbus.Event
 import com.common.utils.log.LogUtil
 import org.greenrobot.eventbus.Subscribe

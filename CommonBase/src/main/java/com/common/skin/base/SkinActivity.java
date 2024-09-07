@@ -8,7 +8,7 @@ import com.common.skin.api.SkinItem;
 import com.common.skin.api.SkinManager;
 import com.common.skin.api.SkinType;
 import com.common.skin.callback.SkinChangeListener;
-import com.common.utils.StatusBarUtil;
+import com.common.utils.ui.StatusBarUtil;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 

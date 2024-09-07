@@ -3,7 +3,7 @@ package com.common.skin.api;
 import android.content.res.Resources;
 import android.text.TextUtils;
 
-import com.common.utils.AppUtil;
+import com.common.utils.resource.AppUtil;
 
 import java.util.Arrays;
 

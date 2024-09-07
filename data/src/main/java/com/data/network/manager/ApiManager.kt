@@ -1,9 +1,8 @@
 package com.data.network.manager
 
-import com.common.CommonUtil
+import com.common.base.BaseApp
 import com.common.utils.glide.SslSocketClient
 import com.common.utils.log.LogUtil
-import com.data.network.manager.interceptor.BaseUrlInterceptor
 import com.data.network.manager.interceptor.HeadersInterceptor
 import com.data.network.manager.interceptor.NetworkStateInterceptor
 import okhttp3.Cache
@@ -34,9 +33,28 @@ class ApiManager private constructor() {
     private val retrofitMap: MutableMap<String, Retrofit?> = ConcurrentHashMap()
     private val apiServiceMap: MutableMap<Class<*>, Any> = ConcurrentHashMap()
 
-    /**
-     * 构造方法
-     */
+
+    companion object {
+        private const val TAG = "ApiManager"
+        private const val DEFAULT_NAME = "default-manager"
+        private val instanceMap = ConcurrentHashMap<String, ApiManager>()
+
+        /**
+         * 获取默认实例
+         */
+        fun defaultInstance(): ApiManager {
+            return of(DEFAULT_NAME)
+        }
+
+        /**
+         * 获取对应实例
+         */
+        fun of(name: String): ApiManager {
+            return instanceMap.getOrPut(name) { ApiManager() }
+        }
+    }
+
+
     init {
         initOkHttp()
     }
@@ -46,7 +64,7 @@ class ApiManager private constructor() {
      */
     private fun initOkHttp() {
         // 指定缓存路径,缓存大小100Mb
-        val cacheDir = CommonUtil.getContext().cacheDir
+        val cacheDir = BaseApp.context.cacheDir
         val cache = Cache(File(cacheDir, "HttpCache"), (1024 * 1024 * 100).toLong())
         val builder = OkHttpClient.Builder()
         setSSL(builder) // 忽略证书验证
@@ -159,38 +177,5 @@ class ApiManager private constructor() {
     fun clear() {
         retrofitMap.clear()
         apiServiceMap.clear()
-    }
-
-
-    companion object {
-        private const val TAG = "ApiManager"
-        private const val DEFAULT_NAME = "default-manager"
-        private val instanceMap = mutableMapOf<String, ApiManager>()
-
-        /**
-         * 获取默认实例
-         *
-         * @param context
-         * @return
-         */
-        fun defaultInstance(): ApiManager {
-            return of(DEFAULT_NAME)
-        }
-
-        /**
-         * 获取对应实例
-         *
-         * @param context
-         * @param name
-         * @return
-         */
-        fun of(name: String): ApiManager {
-            var instance = instanceMap[name]
-            if (instance == null) {
-                instance = ApiManager()
-                instanceMap[name] = instance
-            }
-            return instance
-        }
     }
 }

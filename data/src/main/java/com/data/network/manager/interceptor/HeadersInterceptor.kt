@@ -1,8 +1,8 @@
 package com.data.network.manager.interceptor
 
-import com.common.CommonUtil.getContext
-import com.common.utils.AppUtil
-import com.common.utils.DeviceUtil
+import com.common.base.BaseApp
+import com.common.utils.resource.AppUtil
+import com.common.utils.resource.DeviceUtil
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -15,7 +15,7 @@ class HeadersInterceptor : Interceptor {
     private val osName = DeviceUtil.getPhoneManufacturer()
     private val deviceModel = DeviceUtil.getPhoneModel()
     private val brand = DeviceUtil.getPhoneBrand()
-    private val version = AppUtil.getVersionName(getContext())
+    private val version = AppUtil.getVersionName(BaseApp.context)
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder: Request.Builder = chain.request().newBuilder()

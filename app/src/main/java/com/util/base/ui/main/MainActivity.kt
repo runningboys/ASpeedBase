@@ -1,6 +1,7 @@
 package com.util.base.ui.main
 
 import com.common.base.mvp.MvpBindingActivity
+import com.common.utils.ui.ToastUtil
 import com.util.base.databinding.ActivityMainBinding
 
 
@@ -11,19 +12,21 @@ class MainActivity : MvpBindingActivity<MainContract.Presenter, ActivityMainBind
     }
 
     override fun initView() {
-        binding.titleTv.text = "MainActivity"
+        binding.titleTv.text = "登录"
     }
 
     override fun initListener() {
-
+        binding.titleTv.setOnClickListener {
+            mPresenter.login("13000000000", "12345")
+        }
     }
 
     override fun initData() {
-        mPresenter.queryContacts()
+
     }
 
-    override fun onContacts() {
-
+    override fun onLogin() {
+        ToastUtil.showToast("登录成功")
     }
 
 

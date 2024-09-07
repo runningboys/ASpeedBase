@@ -3,7 +3,7 @@ package com.common.skin.attr;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-import com.common.utils.AppUtil;
+import com.common.utils.resource.AppUtil;
 
 import java.util.ArrayList;
 import java.util.List;

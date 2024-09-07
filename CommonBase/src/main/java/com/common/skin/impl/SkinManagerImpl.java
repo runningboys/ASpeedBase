@@ -16,7 +16,6 @@ import com.common.base.R;
 import com.common.skin.api.ResourceManager;
 import com.common.skin.api.SkinItem;
 import com.common.skin.api.SkinManager;
-import com.common.skin.api.SkinType;
 import com.common.skin.api.ViewSkin;
 import com.common.skin.attr.SkinAttr;
 import com.common.skin.attr.SkinAttrBuilder;
@@ -33,7 +32,7 @@ import com.common.skin.handler.HintColorHandler;
 import com.common.skin.handler.SkinHandler;
 import com.common.skin.handler.SrcHandler;
 import com.common.skin.handler.TextColorHandler;
-import com.common.utils.AppUtil;
+import com.common.utils.resource.AppUtil;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

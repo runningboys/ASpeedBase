@@ -7,11 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.common.base.ability.IBaseView
 import com.common.base.ability.IEventBus
 import com.common.base.ability.INetMonitor
-import com.common.utils.ui.ActivityManager
-import com.common.utils.ui.ClickUtil
-import com.common.utils.ui.ToastUtil
 import com.common.utils.eventbus.Event
 import com.common.utils.log.LogUtil
+import com.common.utils.ui.ClickUtil
+import com.common.utils.ui.ToastUtil
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -26,7 +25,6 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
         super.onCreate(savedInstanceState)
         createEventBus()
         createNetMonitor()
-        ActivityManager.instance.addActivity(this)
         setContentView(getLayoutId())
         mContext = this
         initToolBar()
@@ -83,7 +81,6 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
     }
 
     override fun onDestroy() {
-        ActivityManager.instance.finishActivity(this)
         super.onDestroy()
         destroyEventBus()
         destroyNetMonitor()
@@ -111,8 +108,8 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
      * @param <T>
     </T> */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun <T> onEventBusCome(event: Event<T>?) {
-        if (!isDestroyed && event != null) {
+    fun <T> onEventBusCome(event: Event<T>) {
+        if (!isDestroyed) {
             onMessageEvent(event.eventName, event.data)
         }
     }
@@ -124,8 +121,8 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
      * @param <T>
     </T> */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun <T> onStickyEventBusCome(event: Event<T>?) {
-        if (!isDestroyed && event != null) {
+    fun <T> onStickyEventBusCome(event: Event<T>) {
+        if (!isDestroyed) {
             onMessageStickyEvent(event.eventName, event.data)
         }
     }

@@ -11,9 +11,7 @@ import com.data.database.dao.UserDao
 object DBFactory {
 
     /**
-     * 获取索引dao类
-     *
-     * @return
+     * 获取用户dao类
      */
     @JvmStatic
     fun getUserDao() : UserDao = AppDataBase.getInstance().getUserDao()

@@ -9,11 +9,11 @@ import com.data.sp.AppSp
  * @author LiuFeng
  * @data 2020/2/19 20:47
  */
-object DataCacheManager {
+object CacheManager {
     /**
      * 构建缓存
      */
-    fun buildDataCache() {
+    fun buildCache() {
         // 判断是否有登录账号
         val account = AppSp.getLoginUserId()
         if (account.isBlank()) return
@@ -25,7 +25,7 @@ object DataCacheManager {
     /**
      * 清空缓存
      */
-    fun clearDataCache() {
+    fun clearCache() {
         LogUtil.d("清空缓存")
         CacheFactory.getUserCache().clear()
     }

@@ -1,7 +1,6 @@
 package com.data.database
 
 import android.annotation.SuppressLint
-import android.content.Context
 import com.data.database.db.AppDataBase
 
 
@@ -13,29 +12,16 @@ import com.data.database.db.AppDataBase
  */
 @SuppressLint("StaticFieldLeak")
 object DBHelper {
-    private lateinit var context: Context
     private lateinit var userId: String
 
 
     /**
      * 初始化
      *
-     * @param context
      * @param userId
      */
-    fun init(context: Context, userId: String) {
-        DBHelper.context = context.applicationContext
+    fun init(userId: String) {
         DBHelper.userId = userId
-    }
-
-
-    /**
-     * 获取ApplicationContext
-     *
-     * @return
-     */
-    fun getContext() : Context {
-        return context
     }
 
 

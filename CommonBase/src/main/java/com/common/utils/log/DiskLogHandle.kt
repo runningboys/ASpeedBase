@@ -35,6 +35,8 @@ class DiskLogHandle(
     private val buffer = StringBuilder()
 
     init {
+        val logDir = File(mFolderPath)
+        if (!logDir.exists()) logDir.mkdirs()
         val thread = HandlerThread("DiskLogHandle")
         thread.start()
         handler = WriteHandler(thread.looper)

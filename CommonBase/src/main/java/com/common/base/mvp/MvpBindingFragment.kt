@@ -11,7 +11,7 @@ import com.common.base.binding.BindingFragment
  * @author LiuFeng
  * @data 2021/9/22 16:19
  */
-abstract class MvpBindingFragment<P : BasePresenter<out IBaseView>, VB : ViewBinding> : BindingFragment<VB>(), IPresenter<P> {
+abstract class MvpBindingFragment<VB : ViewBinding, P : BasePresenter<out IBaseView>> : BindingFragment<VB>(), IPresenter<P> {
     protected lateinit var mPresenter: P
 
     override fun onCreate(savedInstanceState: Bundle?) {

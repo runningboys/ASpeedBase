@@ -1,11 +1,10 @@
 package com.util.base
 
 import android.content.Context
-import android.os.FileUtils
+import com.common.utils.crash.AppCrashHandler
+import com.common.utils.crash.CrashStrategy
 import com.common.utils.log.LogUtil
 import java.io.File
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 /**
  * 应用程序管理者
@@ -33,6 +32,9 @@ object AppManager {
     fun init(context: Context) {
         // 日志
         initLogger(context)
+
+        // 崩溃
+        initCrashHandler(context)
 
         LogUtil.d("init --> 环境：$serverConfig")
     }
@@ -70,19 +72,27 @@ object AppManager {
      * 初始化日志工具
      */
     private fun initLogger(context: Context) {
-        // 初始化日志工具
-        /*if (isDebug) {
-            val logDir = File(AppUtil.getAppFilesDir(), "log")
-            FileUtils.createOrExistsDir(logDir)
-            LogUtil.addCommonLogHandle()
+        if (isDebug) {
+            val logDir = File(context.getExternalFilesDir(""), "log")
             LogUtil.addDiskLogHandle(context, logDir.absolutePath)
+            LogUtil.addCommonLogHandle()
             LogUtil.setLogTag("TestDemo")
             LogUtil.isLoggable = true
         } else {
             LogUtil.removeAllHandles()
             LogUtil.isLoggable = false
-        }*/
+        }
     }
+
+
+    /**
+     * 初始化崩溃处理
+     */
+    private fun initCrashHandler(context: Context) {
+        val crashDir = File(context.getExternalFilesDir(""), "crash")
+        AppCrashHandler.init(crashDir.absolutePath, CrashStrategy.ExitsApp)
+    }
+
 
     /**
      * url配置类

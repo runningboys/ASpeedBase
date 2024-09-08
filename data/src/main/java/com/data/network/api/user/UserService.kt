@@ -8,7 +8,8 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
 /**
- * 用户网络请求服务
+ * 用户请求服务
+ * 实现并封装api接口服务
  */
 object UserService: BaseService() {
     private val mApiService by lazy { ApiManager.defaultInstance().getApiService(UserApi::class.java) }
@@ -17,7 +18,7 @@ object UserService: BaseService() {
     /**
      * 登录
      */
-    fun login(phone: String, password: String): Observable<UserBean> {
+    fun login(phone: String, password: String): Observable<NetResult<UserBean>> {
         val params = mutableMapOf<String, String>()
         params["phone"] = phone
         params["password"] = password

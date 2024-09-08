@@ -5,10 +5,11 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
 
     <application
         android:name=".App"
@@ -18,7 +19,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/app_skin_blue">
-        <activity android:name=".ui.main.MainActivity"
+        <activity
+            android:name=".ui.two.TwoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.one.OneActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.three.ThreeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".skin.TestSkinActivity"/>
+        <activity android:name=".skin.TestSkinActivity" />
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * MMKV存储管理类
+ * 文档：https://www.cnblogs.com/baiqiantao/p/10809980.html
  */
 class MMKVManager private constructor(name: String, isMultiProcess: Boolean) {
     private var mmkv = MMKV.mmkvWithID(name, if (isMultiProcess) MMKV.MULTI_PROCESS_MODE else MMKV.SINGLE_PROCESS_MODE)

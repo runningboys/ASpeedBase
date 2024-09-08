@@ -12,11 +12,8 @@ object CacheFactory {
 
     /**
      * 获取用户缓存
-     *
-     * @return
      */
-    fun getUserCache(): UserCache {
-        return UserCache.instance
-    }
+    @JvmStatic
+    fun getUserCache(): UserCache = UserCache.instance
 
 }

@@ -144,9 +144,7 @@ class GeneralParamInterceptor : Interceptor {
             val list: MutableList<String> = ArrayList()
             for (`object` in params.entries) {
                 val (key1, value1) = `object`
-                val key = key1 as String
-                val value = value1 as String
-                list.add("$key=$value")
+                list.add("$key1=$value1")
             }
             val strings = list.toTypedArray()
             Arrays.sort(strings)

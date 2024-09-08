@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.common.base.BaseApp
 import com.data.database.DBHelper
 import com.data.database.dao.UserDao
 import com.data.database.model.UserDB
@@ -53,10 +54,9 @@ abstract class AppDataBase : RoomDatabase() {
          */
         private fun initInstance() : AppDataBase {
             val userId = DBHelper.getUserId()
-            val context = DBHelper.getContext()
             val dbName = DBConfig.getDBName(userId)
 
-            return Room.databaseBuilder(context, AppDataBase::class.java, dbName)
+            return Room.databaseBuilder(BaseApp.context, AppDataBase::class.java, dbName)
                 // 允许主线程执行DB操作，一般不推荐
                 //.allowMainThreadQueries()
                 //添加数据库迁移

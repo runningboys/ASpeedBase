@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @data 2021/3/30 16:04
  */
 class UserCache private constructor() {
-    private val cache: MutableMap<String, UserBean> = ConcurrentHashMap()
+    private val cache = ConcurrentHashMap<String, UserBean>()
 
     /**
      * 通过id获取用户

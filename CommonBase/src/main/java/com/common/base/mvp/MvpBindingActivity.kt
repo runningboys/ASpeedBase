@@ -11,7 +11,7 @@ import com.common.base.binding.BindingActivity
  * @author LiuFeng
  * @data 2021/9/22 16:19
  */
-abstract class MvpBindingActivity<P : BasePresenter<out IBaseView>, VB : ViewBinding> : BindingActivity<VB>(), IPresenter<P> {
+abstract class MvpBindingActivity<VB : ViewBinding, P : BasePresenter<out IBaseView>> : BindingActivity<VB>(), IPresenter<P> {
     protected lateinit var mPresenter: P
 
     override fun onCreate(savedInstanceState: Bundle?) {

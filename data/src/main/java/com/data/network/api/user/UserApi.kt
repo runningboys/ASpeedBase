@@ -15,7 +15,7 @@ interface UserApi {
      * 登录
      */
     @POST("/user/login")
-    fun login(@Body params: Map<String, String>): Observable<UserBean>
+    fun login(@Body params: Map<String, String>): Observable<NetResult<UserBean>>
 
     /**
      * 登录

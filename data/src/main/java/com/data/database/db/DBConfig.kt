@@ -17,8 +17,6 @@ object DBConfig {
 
     /**
      * 数据库名称
-     *
-     * @return
      */
     @JvmStatic
     fun getDBName(userId: String): String {

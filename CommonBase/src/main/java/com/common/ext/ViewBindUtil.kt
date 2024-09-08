@@ -42,7 +42,8 @@ private fun <VB : ViewBinding> withGenericBindingClass(any: Any, block: (Class<V
     while (superclass != null) {
         if (genericSuperclass is ParameterizedType) {
                 try {
-                    return block.invoke(genericSuperclass.actualTypeArguments[1] as Class<VB>)
+                    val types = genericSuperclass.actualTypeArguments
+                    return block.invoke(types[0] as Class<VB>)
                 } catch (e: NoSuchMethodException) {
                 } catch (e: ClassCastException) {
                 } catch (e: InvocationTargetException) {

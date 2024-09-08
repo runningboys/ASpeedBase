@@ -1,12 +1,14 @@
 package com.common.utils.crash
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
+import com.blankj.utilcode.util.AppUtils
+import com.common.base.BaseApp
+import com.common.utils.log.LogUtil
 import com.common.utils.resource.AppUtil
 import com.common.utils.resource.DeviceUtil
-import com.common.utils.log.LogUtil
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -22,33 +24,53 @@ import java.util.Locale
  * @author LiuFeng
  * @date 2018-6-21
  */
-@SuppressLint("StaticFieldLeak")
 object AppCrashHandler : Thread.UncaughtExceptionHandler {
     private const val FILE_NAME = "crash.log"
-    private var mLogPath: String? = null
-    private var mContext: Context? = null
+    private lateinit var mLogPath: String
+    private lateinit var strategy: CrashStrategy
+    private var defHandler: Thread.UncaughtExceptionHandler? = null
 
     /**
      * 初始化
-     *
-     * @param context
      */
-    fun init(context: Context, logPath: String?) {
-        mContext = context.applicationContext
+    fun init(logPath: String, strategy: CrashStrategy = CrashStrategy.ExitsApp) {
         mLogPath = logPath
+        this.strategy = strategy
+        defHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler(this)
+        if (strategy == CrashStrategy.RecoverApp) catchMainLooper()
     }
 
     override fun uncaughtException(thread: Thread, ex: Throwable) {
         // 保存错误信息到SDCard
         saveExceptionToSDCard(ex, mLogPath)
 
-        // 上传错误信息到服务器
-        uploadExceptionToServer(ex)
-
         // 打印错误信息到控制台
         LogUtil.e("AppCrashHandler:" + ex.message, ex)
+
+
+
+        when (strategy) {
+            // 退出应用
+            CrashStrategy.ExitsApp -> {
+                AppUtils.exitApp()
+            }
+
+            // 重启应用
+            CrashStrategy.RelaunchApp -> {
+                AppUtils.relaunchApp(true)
+            }
+
+            // 恢复应用
+            CrashStrategy.RecoverApp -> {
+                // 非主线程，调用原始的uncaughtExceptionHandler进行处理
+                if (thread != Looper.getMainLooper().thread) {
+                    defHandler?.uncaughtException(thread, ex)
+                }
+            }
+        }
     }
+
 
     /**
      * 保存错误信息到SDCard
@@ -75,7 +97,7 @@ object AppCrashHandler : Thread.UncaughtExceptionHandler {
             pw.println()
 
             // 打印手机信息
-            pw.println("App版本号：" + AppUtil.getVersionCode(mContext))
+            pw.println("App版本号：" + AppUtil.getVersionCode(BaseApp.context))
             pw.println()
             pw.println("Android系统版本号：" + DeviceUtil.getBuildVersion())
             pw.println("Android手机制造商：" + DeviceUtil.getPhoneManufacturer())
@@ -102,12 +124,29 @@ object AppCrashHandler : Thread.UncaughtExceptionHandler {
         }
     }
 
-    /**
-     * 上传错误信息到服务器
-     *
-     * @param ex
-     */
-    private fun uploadExceptionToServer(ex: Throwable) {
 
+    /**
+     * 捕获主线程异常崩溃
+     * 参考：https://juejin.cn/post/7200030796974063675
+     */
+    private fun catchMainLooper() {
+        Handler(Looper.getMainLooper()).post {
+            while (true) {
+                try {
+                    //主线程的异常会从这里抛出
+                    Looper.loop()
+                } catch (ex: Throwable) {
+                    // 保存错误信息到SDCard
+                    saveExceptionToSDCard(ex, mLogPath)
+
+                    // 打印错误信息到控制台
+                    LogUtil.e("AppCrashHandler:" + ex.message, ex)
+                }
+            }
+        }
     }
+}
+
+enum class CrashStrategy {
+    ExitsApp, RelaunchApp, RecoverApp
 }

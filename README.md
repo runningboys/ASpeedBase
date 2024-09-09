@@ -1,8 +1,10 @@
-一个用于支持Android项目快速集成开发的基础框架
+一个用于支持Android项目快速集成开发的基础框架，框架图如下：
+![img.png](img.png)
 
 
-# 必要依赖配置
-#### BaseApp
+
+# 一、必要依赖配置
+#### 1.1 BaseApp
 继承并配置清单
 ```
 class App : BaseApp() {
@@ -27,8 +29,8 @@ class App : BaseApp() {
 ```
 
 
-# 应用管理
-#### AppManager
+# 二、应用管理
+#### 2.1 AppManager
 AppManager用于应用的环境管理、工具管理等，封装简化环境切换、工具配置等，放在应用层app模块下。
 
 使用方式如下：
@@ -226,9 +228,9 @@ object AppManager {
 ```
 
 
-# 应用架构（MVP、MVVM）
-### 基类
-#### BaseActivity
+# 三、应用架构（MVP、MVVM）
+### 3.1基类
+#### 3.1.1 BaseActivity
 BaseActivity继承自AppCompatActivity的基类：
 - 封装EventBus
 - 封装网络状态
@@ -299,7 +301,7 @@ EventBusUtil.post(EventName.update_nickname, "张三")
 
 
 
-#### BindingActivity
+#### 3.1.2 BindingActivity
 BindingActivity继承自BaseActivity的封装ViewBinding的基类，使用方式如下：
 ```
 class MainActivity : BindingActivity<ActivityMainBinding>() {
@@ -319,7 +321,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
 ```
 
 
-### MVP
+### 3.2 MVP
 #### MvpBindingActivity
 MvpBindingActivity继承自BindingActivity的基类，使用方式如下：
 ```
@@ -385,7 +387,7 @@ class TwoActivity : MvpBindingActivity<ActivityTwoBinding, TwoContract.Presenter
 
 
 
-### MVVM
+### 3.3 MVVM
 #### MvvmBindingActivity
 MvvmBindingActivity继承自BindingActivity的基类，使用方式如下：
 ```
@@ -425,9 +427,9 @@ class OneActivity : MvvmBindingActivity<ActivityOneBinding, OneViewModel>() {
 
 
 
-# 数据（偏好存储、数据库、网络数据、缓存）
-### 偏好存储
-#### SharedPreferences
+# 四、数据（偏好存储、数据库、网络数据、缓存）
+### 4.1 偏好存储
+#### 4.1.1 SharedPreferences
 SP的操作类SpManager：
 - 获取默认实例：`SpManager.defaultInstance()`
 - 获取指定实例：`SpManager.of(name)`
@@ -464,7 +466,7 @@ val userId = UserSp.getUserId()
 ```
 
 
-#### MMKV
+#### 4.1.2 MMKV
 MMKV是腾讯开源的键值对存储库，拥有非常高的性能以及支持跨进程。
 MMKV的操作类MMKVManager：
 - 获取默认实例：`MMKVManager.defaultInstance()`
@@ -504,7 +506,7 @@ val userId = UserSp.getUserId()
 
 
 
-### 数据库存储
+### 4.2 数据库存储
 #### Room
 数据库封装在data模块的database中：
 - 数据库表：在model目录，按需扩展表。
@@ -571,7 +573,7 @@ object DBConfig {
 ```
 
 
-### 网络数据
+### 4.3 网络数据
 #### OKHttp和Retrofit
 网络数据封装在data模块的network中：
 - 数据模型：在model目录存放数据模型。
@@ -627,7 +629,7 @@ if (result.isSuccess()) {
 ```
 
 
-### 缓存
+### 4.4 缓存
 缓存封装在data模块的cache中：
 - 访问接口：通过CacheFactory访问各接口类。
 - 缓存管理：在DataCacheManager类管理缓存的构建和清理等。
@@ -673,7 +675,7 @@ val user = CacheFactory.getUserCache().getUser(userId)
 
 
 
-### 数据仓库
+### 4.5 数据仓库
 数据仓库用于封装组合数据库、网络请求和缓存等接口，实现数据对外的提供。
 数据仓库封装在data模块的repository中：
 
@@ -736,8 +738,8 @@ viewModel.login("xx", "xx").observe(this, object : UIObserver<UserBean>(this) {
 
 
 
-# 工具
-### 日志
+# 五、工具
+### 5.1 日志
 #### LogUtil
 日志工具支持控制台打印、日志文件打印、调用栈打印等。
 使用方式：
@@ -766,7 +768,7 @@ LogUtil.json("格式化json打印", "{\"name\":\"张\",\"age\":18}")
 ```
 
 
-### 耗时统计
+### 5.2 耗时统计
 #### TimingRecorder
 任意位置添加记录，并最终打印所有位置的顺序耗时和总耗时。
 使用方式：
@@ -794,7 +796,7 @@ TimingRecorder.logTime(label);
 ```
 
 
-### 崩溃处理
+### 5.3 崩溃处理
 #### AppCrashHandler
 捕获App的崩溃信息，并根据策略进行应用退出、应用重启或应用恢复。
 使用方式：
@@ -811,7 +813,7 @@ AppCrashHandler.init(crashDir.absolutePath, CrashStrategy.ExitsApp)
 
 
 
-### 卡顿检测器
+### 5.4 卡顿检测器
 #### BlockMonitor
 应用发生卡顿或ANR的检测小工具，用于输出发生卡顿的主线程调用栈和卡顿耗时。
 使用方式：
@@ -839,7 +841,7 @@ systemLog：<<<<< Finished to Handler (android.app.ActivityThread$H) {6cc1c1c} n
 
 
 
-### 事件总线
+### 5.5 事件总线
 #### EventBusUtil
 封装EventBus工具，以字符串eventName为事件名，用Event做数据载体，避免原EventBus每个事件创建不同对象的繁琐。
 使用方式：
@@ -889,7 +891,7 @@ EventBusUtil.post(EventName.update_nickname, "张三")
 ```
 
 
-### UI线程
+### 5.6 UI线程
 #### UIHandler
 UIHandler用于主线程切换、线程判断、任务执行等。
 使用方式：
@@ -911,7 +913,7 @@ UIHandler.removeTask("task-tag")
 ```
 
 
-### 线程池
+### 5.7 线程池
 #### ThreadUtil
 ThreadUtil用于子线程任务执行，使用方式：
 ```
@@ -926,7 +928,7 @@ ThreadUtil.schedule({}, 200, 200)
 ```
 
 
-### 定时任务管理器
+### 5.8 定时任务管理器
 #### TaskTimeManager
 TaskTimeManager用于子定时任务执行和管理，区别于其他定时器，它使用延时队列存储，定时触发，适用于高性能大量的定时任务处理，例如大量阅后即焚消息，避免创建很多的定时器场景性能问题。
 使用方式：
@@ -945,7 +947,7 @@ val task = TaskTimeManager.getTask(taskId)
 ```
 
 
-### 网络对时工具
+### 5.9 网络对时工具
 #### NetTimeUtil
 很多场景下使用本地系统时间会有问题，本地的时间是能够被修改的，NetTimeUtil用于网络对时，获取与本地时间的偏差，然后得到当前网络的时间。
 使用方式：
@@ -971,7 +973,7 @@ val time = NetTimeUtil.currentTimeMillis()
 
 
 
-### 其他工具
+### 六、简述
 
 - 图片加载:`GlideUtil`
 - 正则匹配：`RegexUtil`

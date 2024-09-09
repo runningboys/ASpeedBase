@@ -9,16 +9,9 @@ class App : BaseApp() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // 初始化应用管理器
         AppManager.init(this)
-        
-        // 用户已登录
-        val userId = AppSp.getLoginUserId()
-        if (userId.isNotBlank()) {
-            AppSp.login(userId)
-            
-            // 初始DB的用户
-            DBHelper.init(userId)
-        }
     }
 }
 ```

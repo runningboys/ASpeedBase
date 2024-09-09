@@ -1,4 +1,4 @@
-package com.util.base
+package com.util.base.common
 
 import android.text.TextUtils
 

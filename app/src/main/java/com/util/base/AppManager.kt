@@ -4,6 +4,11 @@ import android.content.Context
 import com.common.utils.crash.AppCrashHandler
 import com.common.utils.crash.CrashStrategy
 import com.common.utils.log.LogUtil
+import com.data.database.DBHelper
+import com.data.network.manager.ApiManager
+import com.data.preferences.AppSp
+import com.util.base.common.AppConstants
+import com.util.base.common.ServerEnum
 import java.io.File
 
 /**
@@ -30,14 +35,37 @@ object AppManager {
      * @param context
      */
     fun init(context: Context) {
+        LogUtil.d("init --> 环境：$serverConfig")
+
         // 日志
         initLogger(context)
 
         // 崩溃
         initCrashHandler(context)
 
-        LogUtil.d("init --> 环境：$serverConfig")
+        // 网络请求
+        initApiManager()
+
+        // 用户登录初始化
+        loginInit()
     }
+
+
+    /**
+     * 用户登录初始化
+     */
+    fun loginInit() {
+        // 判断是否已登录
+        val userId = AppSp.getLoginUserId()
+        if (userId.isBlank()) return
+
+        // 记录登录用户
+        AppSp.login(userId)
+
+        // 初始化用户DB
+        DBHelper.init(userId)
+    }
+
 
     /**
      * 设置当前环境配置
@@ -47,6 +75,7 @@ object AppManager {
     fun setServerConfig(serverEnum: ServerEnum) {
         serverConfig = serverEnum
     }
+
 
     /**
      * 获取base地址
@@ -59,12 +88,12 @@ object AppManager {
 
 
     /**
-     * 获取base地址
+     * 获取用户协议地址
      *
      * @return
      */
-    fun getMeetingUrl(): String {
-        return Config.meetingUrl
+    fun getUserAgreementUrl(): String {
+        return Config.userAgreementUrl
     }
 
 
@@ -95,11 +124,19 @@ object AppManager {
 
 
     /**
+     * 初始化ApiManager
+     */
+    private fun initApiManager() {
+        ApiManager.defaultInstance().updateBaseUrl(getBaseUrl())
+    }
+
+
+    /**
      * url配置类
      */
     private object Config {
         var baseUrl: String
-        var meetingUrl: String
+        var userAgreementUrl: String
 
         // 初始化配置数据
         init {
@@ -107,15 +144,15 @@ object AppManager {
             when (serverConfig) {
                 ServerEnum.Release -> {
                     baseUrl = AppConstants.Release.BASE_URL
-                    meetingUrl = AppConstants.Release.MEETING_URL
+                    userAgreementUrl = AppConstants.Release.USER_AGREEMENT_URL
                 }
                 ServerEnum.Beta -> {
                     baseUrl = AppConstants.Beta.BASE_URL
-                    meetingUrl = AppConstants.Beta.MEETING_URL
+                    userAgreementUrl = AppConstants.Beta.USER_AGREEMENT_URL
                 }
                 else -> {
                     baseUrl = AppConstants.Develop.BASE_URL
-                    meetingUrl = AppConstants.Develop.MEETING_URL
+                    userAgreementUrl = AppConstants.Develop.USER_AGREEMENT_URL
                 }
             }
         }

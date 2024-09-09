@@ -22,10 +22,10 @@ object BlockMonitor {
     private const val TAG = "BlockMonitor"
     private lateinit var looperPrinter: LooperPrinter
 
-    fun start() {
+    fun start(blockThreshold: Long = 300L) {
         if (this::looperPrinter.isInitialized) return
         val looper = Looper.getMainLooper()
-        looperPrinter = LooperPrinter(looper)
+        looperPrinter = LooperPrinter(looper, blockThreshold)
         looper.setMessageLogging(looperPrinter)
     }
 
@@ -36,13 +36,12 @@ object BlockMonitor {
     }
 
 
-    private class LooperPrinter(val looper: Looper) : Printer {
+    private class LooperPrinter(val looper: Looper, val blockThreshold: Long) : Printer {
         private val startTag = ">"
         private val endTag = "<"
 
         private val date = Date()
         private var startTime: Long = 0
-        private var blockThreshold = 300L
         private val mainThread = looper.thread
         private val timeFormat = SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.UK)
 

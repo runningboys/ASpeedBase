@@ -1,4 +1,4 @@
-package com.data.sp
+package com.data.preferences
 
 import com.common.utils.store.SpManager
 

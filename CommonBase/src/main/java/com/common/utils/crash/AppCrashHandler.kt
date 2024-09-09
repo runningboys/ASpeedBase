@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import com.blankj.utilcode.util.AppUtils
-import com.common.base.BaseApp
 import com.common.utils.log.LogUtil
 import com.common.utils.resource.AppUtil
 import com.common.utils.resource.DeviceUtil
@@ -97,7 +96,7 @@ object AppCrashHandler : Thread.UncaughtExceptionHandler {
             pw.println()
 
             // 打印手机信息
-            pw.println("App版本号：" + AppUtil.getVersionCode(BaseApp.context))
+            pw.println("App版本号：" + AppUtil.getVersionCode())
             pw.println()
             pw.println("Android系统版本号：" + DeviceUtil.getBuildVersion())
             pw.println("Android手机制造商：" + DeviceUtil.getPhoneManufacturer())

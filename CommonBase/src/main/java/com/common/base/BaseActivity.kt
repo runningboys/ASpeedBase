@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import com.common.base.ability.IBaseView
 import com.common.base.ability.IEventBus
 import com.common.base.ability.INetMonitor
@@ -70,6 +71,10 @@ abstract class BaseActivity : AppCompatActivity(), IEventBus, INetMonitor, IBase
 
     override fun onError(code: Int, message: String?) {
         LogUtil.e("code:$code message:$message")
+    }
+
+    override fun getLife(): Lifecycle {
+        return lifecycle
     }
 
     override fun isDestroyed(): Boolean {

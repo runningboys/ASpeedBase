@@ -1,15 +1,25 @@
 package com.common.base
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.Utils.OnAppStatusChangedListener
 import com.common.receiver.NetworkStateReceiver
+import com.common.utils.log.LogUtil
 import com.common.utils.ui.RouterUtil
 
 /**
  * Application基类
  */
 open class BaseApp : MultiDexApplication() {
+
+    companion object {
+        @JvmStatic
+        @SuppressLint("StaticFieldLeak")
+        lateinit var context: Context
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -20,11 +30,24 @@ open class BaseApp : MultiDexApplication() {
 
         // 注册网络状态变化广播接收器
         NetworkStateReceiver.instance.register(this)
+
+        // 应用前后台监听
+        AppUtils.registerAppStatusChangedListener(object : OnAppStatusChangedListener {
+            override fun onForeground(activity: Activity) {
+                onAppForeground(activity)
+            }
+
+            override fun onBackground(activity: Activity) {
+                onAppBackground(activity)
+            }
+        })
     }
 
-    companion object {
-        @JvmStatic
-        @SuppressLint("StaticFieldLeak")
-        lateinit var context: Context
+    protected open fun onAppForeground(activity: Activity) {
+        LogUtil.d("App onForeground")
+    }
+
+    protected open fun onAppBackground(activity: Activity) {
+        LogUtil.d("App onBackground")
     }
 }

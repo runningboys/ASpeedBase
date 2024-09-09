@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import com.common.base.ability.IBaseView
 import com.common.base.ability.IEventBus
 import com.common.base.ability.INetMonitor
@@ -129,6 +130,10 @@ abstract class BaseFragment : Fragment(), IEventBus, INetMonitor, IBaseView {
     override fun showMessage(message: String) {}
     override fun onError(code: Int, message: String?) {
         LogUtil.e("code:$code message:$message")
+    }
+
+    override fun getLife(): Lifecycle {
+        return lifecycle
     }
 
     /**

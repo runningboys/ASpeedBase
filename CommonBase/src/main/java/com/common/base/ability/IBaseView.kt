@@ -1,5 +1,7 @@
 package com.common.base.ability
 
+import androidx.lifecycle.Lifecycle
+
 /**
  * view基类
  *
@@ -31,4 +33,9 @@ interface IBaseView {
      * @param message
      */
     fun onError(code: Int, message: String?)
+
+    /**
+     * 获取生命周期
+     */
+    fun getLife(): Lifecycle
 }

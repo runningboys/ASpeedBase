@@ -1,7 +1,7 @@
 package com.data.cache
 
 import com.common.utils.log.LogUtil
-import com.data.sp.AppSp
+import com.data.preferences.AppSp
 
 /**
  * 缓存数据管理类

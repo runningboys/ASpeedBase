@@ -1,15 +1,5 @@
-一个Android快速集成基础框架依赖的库
+一个用于支持Android项目快速集成开发的基础框架
 
-Gradle依赖方式：
-1. Project下的build.gradle
-```
-maven { url 'https://jitpack.io' }
-```
-
-2. app下的build.gradle
-```
-implementation 'com.github.runningboys:ASpeedBase:1.0'
-```
 
 # 必要依赖配置
 #### BaseApp
@@ -44,9 +34,206 @@ class App : BaseApp() {
 ```
 
 
+# 应用管理
+#### AppManager
+AppManager用于应用的环境管理、工具管理等，封装简化环境切换、工具配置等，放在应用层app模块下。
+
+使用方式如下：
+```
+// 1.创建应用环境配置常量
+interface AppConstants {
+    /**
+     * 正式服环境
+     */
+    object Release {
+        const val BASE_URL = "https://www.baidu.com"
+        const val USER_AGREEMENT_URL = "https://www.baidu.com"
+    }
+
+    /**
+     * 测试服环境
+     */
+    object Beta {
+        const val BASE_URL = "https://www.baidu.com"
+        const val USER_AGREEMENT_URL = "https://www.baidu.com"
+    }
+
+    /**
+     * 开发服环境
+     */
+    object Develop {
+        const val BASE_URL = "https://www.baidu.com"
+        const val USER_AGREEMENT_URL = "https://www.baidu.com"
+    }
+}
 
 
-# 架构（MVP、MVVM）
+
+// 2. 管理环境配置和工具配置
+object AppManager {
+
+    /**
+     * 是否是debug模式（日志打印控制）
+     */
+    private var isDebug = true
+
+    /**
+     * 服务器环境配置（用于简化切换正式、测试、开发等环境）
+     */
+    private var serverConfig = ServerEnum.Beta
+
+    /**
+     * 初始化
+     *
+     * @param context
+     */
+    fun init(context: Context) {
+        LogUtil.d("init --> 环境：$serverConfig")
+
+        // 日志
+        initLogger(context)
+
+        // 崩溃
+        initCrashHandler(context)
+
+        // 网络请求
+        initApiManager()
+
+        // 用户登录初始化
+        loginInit()
+    }
+
+
+    /**
+     * 用户登录初始化
+     */
+    fun loginInit() {
+        // 判断是否已登录
+        val userId = AppSp.getLoginUserId()
+        if (userId.isBlank()) return
+
+        // 记录登录用户
+        AppSp.login(userId)
+
+        // 初始化用户DB
+        DBHelper.init(userId)
+
+        // 网络对时
+        initNetTime()
+    }
+
+
+    /**
+     * 设置当前环境配置
+     *
+     * @param serverEnum
+     */
+    fun setServerConfig(serverEnum: ServerEnum) {
+        serverConfig = serverEnum
+    }
+
+
+    /**
+     * 获取base地址
+     *
+     * @return
+     */
+    fun getBaseUrl(): String {
+        return Config.baseUrl
+    }
+
+
+    /**
+     * 获取用户协议地址
+     *
+     * @return
+     */
+    fun getUserAgreementUrl(): String {
+        return Config.userAgreementUrl
+    }
+
+
+    /**
+     * 初始化日志工具
+     */
+    private fun initLogger(context: Context) {
+        if (isDebug) {
+            val logDir = File(context.getExternalFilesDir(""), "log")
+            LogUtil.addDiskLogHandle(context, logDir.absolutePath)
+            LogUtil.addCommonLogHandle()
+            LogUtil.setLogTag("TestDemo")
+            LogUtil.isLoggable = true
+        } else {
+            LogUtil.removeAllHandles()
+            LogUtil.isLoggable = false
+        }
+    }
+
+
+    /**
+     * 初始化崩溃处理
+     */
+    private fun initCrashHandler(context: Context) {
+        val crashDir = File(context.getExternalFilesDir(""), "crash")
+        AppCrashHandler.init(crashDir.absolutePath, CrashStrategy.ExitsApp)
+    }
+
+
+    /**
+     * 初始化ApiManager
+     */
+    private fun initApiManager() {
+        ApiManager.defaultInstance().updateBaseUrl(getBaseUrl())
+    }
+
+
+    /**
+     * 初始化网络对时
+     */
+    private fun initNetTime() {
+        // 网络对时
+        NetTimeUtil.calculateOffsetTime()
+
+        // 时间改变监听
+        TimeReceiver.addListener(object : TimeListener {
+            override fun onTimeChange() {
+                NetTimeUtil.calculateOffsetTime()
+            }
+        })
+    }
+
+
+    /**
+     * url配置类
+     */
+    private object Config {
+        var baseUrl: String
+        var userAgreementUrl: String
+
+        // 初始化配置数据
+        init {
+            // 取不同环境地址
+            when (serverConfig) {
+                ServerEnum.Release -> {
+                    baseUrl = AppConstants.Release.BASE_URL
+                    userAgreementUrl = AppConstants.Release.USER_AGREEMENT_URL
+                }
+                ServerEnum.Beta -> {
+                    baseUrl = AppConstants.Beta.BASE_URL
+                    userAgreementUrl = AppConstants.Beta.USER_AGREEMENT_URL
+                }
+                else -> {
+                    baseUrl = AppConstants.Develop.BASE_URL
+                    userAgreementUrl = AppConstants.Develop.USER_AGREEMENT_URL
+                }
+            }
+        }
+    }
+}
+```
+
+
+# 应用架构（MVP、MVVM）
 ### 基类
 #### BaseActivity
 BaseActivity继承自AppCompatActivity的基类：
@@ -604,7 +791,7 @@ TimingRecorder.addRecord(label, "work C");
 TimingRecorder.logTime(label);
 
 
-// 耗时打印的结构
+// 耗时打印的日志
  * 标签: label <开始>
  * 0 ms  message: 开始
  * 1501 ms  message: 执行A
@@ -627,6 +814,34 @@ AppCrashHandler.init(crashDir.absolutePath, CrashStrategy.ExitsApp)
 应用退出：崩溃后退出应用。
 应用重启：崩溃后杀掉应用进程再重启，如果继续崩溃可能一直重启或异常。
 应用恢复：捕获主线程崩溃并恢复MainLooper，但可能保持为异常状态。
+```
+
+
+
+### 卡顿检测器
+#### BlockMonitor
+应用发生卡顿或ANR的检测小工具，用于输出发生卡顿的主线程调用栈和卡顿耗时。
+使用方式：
+```
+// 启动检测器
+BlockMonitor.start(blockThreshold = 300L)
+
+// 停止检测器
+BlockMonitor.stop()
+
+
+// 产生卡顿打印的日志
+BlockMonitor 发生卡顿 --> 
+at java.lang.Thread.sleep(Threadjava:-2)
+at java.lang.Thread.sleep(Threadjava:453)
+at java.lang.Thread.sleep(Threadjava:358)
+at com.util.base.ui.mainMainActivity.initDat(MainActivity.kt:21)
+at com.common.base.BaseActivityonCreate(BaseActivity.kt:34)
+at com.common.base.bindingBindingActivity.onCreat(BindingActivity.kt:21)
+at android.app.ActivityperformCreate(Activity.java:8946)
+
+BlockMonitor 卡顿统计 --> 开始：09-09 10:38:30.186  结束：09-09 10:38:33.323 卡顿时长：3137ms 
+systemLog：<<<<< Finished to Handler (android.app.ActivityThread$H) {6cc1c1c} null
 ```
 
 
@@ -681,18 +896,100 @@ EventBusUtil.post(EventName.update_nickname, "张三")
 ```
 
 
-
-### 吐司
-#### ToastUtil
-
-
-### 图片加载
-#### GlideUtil
-
-
 ### UI线程
 #### UIHandler
+UIHandler用于主线程切换、线程判断、任务执行等。
+使用方式：
+```
+// 判断主线程
+val isMainThread = UIHandler.isMainThread()
+
+// 主线程立即执行（本身在主线程时直接执行不会post）
+UIHandler.run { // todo }
+
+// 主线程延时执行
+UIHandler.run({ // todo }, 2000)
+
+// 主线程标记任务延时执行（任务唯一标记，实现新的任务覆盖旧的未执行任务）
+UIHandler.run("task-tag", { // todo }, 2000)
+
+// 移除任务
+UIHandler.removeTask("task-tag")
+```
 
 
 ### 线程池
 #### ThreadUtil
+ThreadUtil用于子线程任务执行，使用方式：
+```
+// 普通任务
+ThreadUtil.request {  }
+
+// 延迟任务
+ThreadUtil.schedule({}, 200)
+
+// 循环周期任务
+ThreadUtil.schedule({}, 200, 200)
+```
+
+
+### 定时任务管理器
+#### TaskTimeManager
+TaskTimeManager用于子定时任务执行和管理，区别于其他定时器，它使用延时队列存储，定时触发，适用于高性能大量的定时任务处理，例如大量阅后即焚消息，避免创建很多的定时器场景性能问题。
+使用方式：
+```
+// 添加定时任务(开始时间和持续时长决定执行的最终时间)
+// 实际执行时间为：startTime + duration
+val task = Task("id", startTime, duration, runnable)
+TaskTimeManager.addTask(task)
+
+// 移除任务
+TaskTimeManager.removeTask(taskId)
+
+// 查询任务
+val task = TaskTimeManager.getTask(taskId)
+···
+```
+
+
+### 网络对时工具
+#### NetTimeUtil
+很多场景下使用本地系统时间会有问题，本地的时间是能够被修改的，NetTimeUtil用于网络对时，获取与本地时间的偏差，然后得到当前网络的时间。
+使用方式：
+```
+// 1. 初始化网络对时
+private fun initNetTime() {
+    // 网络对时
+    NetTimeUtil.calculateOffsetTime()
+
+    // 时间改变监听
+    TimeReceiver.addListener(object : TimeListener {
+        override fun onTimeChange() {
+            NetTimeUtil.calculateOffsetTime()
+        }
+    })
+}
+
+
+// 2. 获取网络时间
+val time = NetTimeUtil.currentTimeMillis()
+···
+```
+
+
+
+### 其他工具
+- 吐司:`ToastUtil`
+- 图片加载:`GlideUtil`
+- 正则匹配：`RegexUtil`
+- 权限请求：`PermissionManager`
+- 网络状态：`NetworkUtil`
+- 密码压缩：`ZipUtil`
+- 序列化：`GsonUtil`
+- 文件工具：`FileUtil`
+- 下载工具：`DownloadManager`
+- Activity管理：`ActivityManager`
+- 路由工具：`RouterUtil`
+- 文本颜色：`TextColorUtil`
+
+

@@ -38,10 +38,10 @@ public class NetTimeUtil {
     private static final SpManager spManager = SpManager.of(NET_TIME_NAME);
 
     static {
-        webUrlMap.put("http://www.baidu.com", false);  //百度
-        webUrlMap.put("http://www.taobao.com", false); //淘宝
-        webUrlMap.put("http://www.360.cn", false);     //360
-        webUrlMap.put("http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp", true); // 淘宝接口
+        webUrlMap.put("https://www.baidu.com", false);  //百度
+        webUrlMap.put("https://www.taobao.com", false); //淘宝
+        webUrlMap.put("https://www.360.cn", false);     //360
+        webUrlMap.put("https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp", true); // 淘宝接口
     }
 
 

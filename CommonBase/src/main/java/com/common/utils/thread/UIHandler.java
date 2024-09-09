@@ -96,13 +96,6 @@ public class UIHandler extends Handler {
         return Looper.myLooper() == Looper.getMainLooper();
     }
 
-    /**
-     * 清空当前Handler队列所有消息
-     */
-    public static void dispose() {
-        getInstance().removeCallbacksAndMessages(null);
-    }
-
     @Override
     public void handleMessage(@NonNull Message msg) {
         super.handleMessage(msg);

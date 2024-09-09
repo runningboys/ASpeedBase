@@ -7,6 +7,7 @@ package com.util.base.statemachine
  * @data 2021/9/22 17:34
  */
 object StateMachineTest {
+
     fun runTest() {
         val person = PersonMachine.INSTANCE
         person.start()

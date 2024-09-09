@@ -1,9 +1,12 @@
 package com.util.base
 
 import android.content.Context
+import com.common.receiver.TimeListener
+import com.common.receiver.TimeReceiver
 import com.common.utils.crash.AppCrashHandler
 import com.common.utils.crash.CrashStrategy
 import com.common.utils.log.LogUtil
+import com.common.utils.time.NetTimeUtil
 import com.data.database.DBHelper
 import com.data.network.manager.ApiManager
 import com.data.preferences.AppSp
@@ -25,7 +28,7 @@ object AppManager {
     private var isDebug = true
 
     /**
-     * 服务器环境配置（根据打包配置自动匹配环境）
+     * 服务器环境配置（用于简化切换正式、测试、开发等环境）
      */
     private var serverConfig = ServerEnum.Beta
 
@@ -64,6 +67,9 @@ object AppManager {
 
         // 初始化用户DB
         DBHelper.init(userId)
+
+        // 网络对时
+        initNetTime()
     }
 
 
@@ -128,6 +134,22 @@ object AppManager {
      */
     private fun initApiManager() {
         ApiManager.defaultInstance().updateBaseUrl(getBaseUrl())
+    }
+
+
+    /**
+     * 初始化网络对时
+     */
+    private fun initNetTime() {
+        // 网络对时
+        NetTimeUtil.calculateOffsetTime()
+
+        // 时间改变监听
+        TimeReceiver.addListener(object : TimeListener {
+            override fun onTimeChange() {
+                NetTimeUtil.calculateOffsetTime()
+            }
+        })
     }
 
 

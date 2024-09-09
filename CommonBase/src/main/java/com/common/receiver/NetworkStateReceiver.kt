@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import com.common.base.BaseApp
 import com.common.utils.network.NetworkUtil
 
 /**
@@ -13,7 +14,7 @@ import com.common.utils.network.NetworkUtil
  * @author LiuFeng
  * @date 2017-11-01
  */
-class NetworkStateReceiver private constructor() : BroadcastReceiver() {
+object NetworkStateReceiver : BroadcastReceiver() {
     /**
      * 网络状态变化监听器
      */
@@ -66,30 +67,17 @@ class NetworkStateReceiver private constructor() : BroadcastReceiver() {
 
     /**
      * 注册
-     *
-     * @param context
      */
-    fun register(context: Context) {
+    fun register() {
         val filter = IntentFilter()
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-        context.registerReceiver(this, filter)
+        BaseApp.context.registerReceiver(this, filter)
     }
 
     /**
      * 取消注册
-     *
-     * @param context
      */
-    fun unregister(context: Context) {
-        context.unregisterReceiver(this)
-    }
-
-    companion object {
-        /**
-         * 单例
-         *
-         * @return
-         */
-        val instance = NetworkStateReceiver()
+    fun unregister() {
+        BaseApp.context.unregisterReceiver(this)
     }
 }

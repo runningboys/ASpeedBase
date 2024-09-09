@@ -7,6 +7,7 @@ import androidx.multidex.MultiDexApplication
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils.OnAppStatusChangedListener
 import com.common.receiver.NetworkStateReceiver
+import com.common.receiver.TimeReceiver
 import com.common.utils.log.LogUtil
 import com.common.utils.ui.RouterUtil
 
@@ -28,8 +29,11 @@ open class BaseApp : MultiDexApplication() {
         // 初始化ARouter
         RouterUtil.init(this)
 
-        // 注册网络状态变化广播接收器
-        NetworkStateReceiver.instance.register(this)
+        // 注册时间改变广播
+        TimeReceiver.register()
+
+        // 注册网络变化广播
+        NetworkStateReceiver.register()
 
         // 应用前后台监听
         AppUtils.registerAppStatusChangedListener(object : OnAppStatusChangedListener {

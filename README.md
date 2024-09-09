@@ -972,17 +972,39 @@ val time = NetTimeUtil.currentTimeMillis()
 
 
 ### 其他工具
-- 吐司:`ToastUtil`
+
 - 图片加载:`GlideUtil`
 - 正则匹配：`RegexUtil`
+- 判等工具：`EqualsUtil`
+- 版本号比较：`VersionUtil`
+- 拼音工具：`PinYinUtil`
+- 搜索文字或拼音匹配：`WordMatchUtil`
 - 权限请求：`PermissionManager`
 - 网络状态：`NetworkUtil`
 - 密码压缩：`ZipUtil`
+- AES加密：`AESUtil`
+- MD5工具：`MD5Util`
 - 序列化：`GsonUtil`
 - 文件工具：`FileUtil`
+- 文件IO工具：`FileIOUtil`
+- 反射工具：`ReflectionUtil`
+- 屏幕工具：`ScreenUtil`
 - 下载工具：`DownloadManager`
-- Activity管理：`ActivityManager`
+- 媒体播放：`MediaPlayerUtil`
+- 音频流播放：`AudioTrackUtil`
+- 音频管理：`AudioHelper`
+- 吐司:`ToastUtil`
+- 字符串工具：`StringUtil`
 - 路由工具：`RouterUtil`
 - 文本颜色：`TextColorUtil`
+- 状态栏工具：`StatusBarUtil`
+- 键盘工具：`KeyBoardUtil`
+- Activity管理：`ActivityManager`
+- RecyclerView工具：`RecyclerViewUtil`
+- 应用程序工具：`AppUtil`
+- asset资源工具：`AssetUtil`
+- 设备工具：`DeviceUtil`
+- SocketIo工具：`SocketIoClient`
+- WebSocket工具：`WebSocketManager`
 
 

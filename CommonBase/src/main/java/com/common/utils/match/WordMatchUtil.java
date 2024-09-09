@@ -11,12 +11,12 @@ import java.util.List;
 
 
 /**
- * 关键字匹配工具
+ * 搜索关键字匹配工具
  *
  * @author LiuFeng
  * @data 2021/9/22 15:08
  */
-public class KeywordMatchUtil {
+public class WordMatchUtil {
 
     /**
      * 匹配文本

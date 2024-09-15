@@ -8,6 +8,8 @@ import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils.OnAppStatusChangedListener
 import com.common.receiver.NetworkStateReceiver
 import com.common.receiver.TimeReceiver
+import com.common.receiver.USBStateListener
+import com.common.receiver.USBStateReceiver
 import com.common.utils.log.LogUtil
 import com.common.utils.ui.RouterUtil
 
@@ -34,6 +36,17 @@ open class BaseApp : MultiDexApplication() {
 
         // 注册网络变化广播
         NetworkStateReceiver.register()
+
+        // USB状态变化广播
+        USBStateReceiver.register()
+
+        // 添加USB状态变化监听
+        USBStateReceiver.addListener(object : USBStateListener {
+            override fun onUSBStateChanged(isUSBConnecting: Boolean) {
+                LogUtil.setUsbConnect(isUSBConnecting)
+            }
+        })
+
 
         // 应用前后台监听
         AppUtils.registerAppStatusChangedListener(object : OnAppStatusChangedListener {

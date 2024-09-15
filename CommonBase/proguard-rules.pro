@@ -1,66 +1,113 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-optimizationpasses 5
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-dontusemixedcaseclassnames
 
--keepclasseswithmembernames class ** {
+-dontskipnonpubliclibraryclasses
+
+-dontskipnonpubliclibraryclassmembers
+
+-dontpreverify
+
+-verbose
+-printmapping priguardMapping.txt
+
+-optimizations !code/simplification/artithmetic,!field/*,!class/merging/*
+
+
+-keep class me.hgj.jetpackmvvm.demo.data.**{*;}
+
+################common###############
+
+ #实体类不参与混淆
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+-keepnames class * implements java.io.Serializable
+-keepattributes Signature
+-keep class **.R$* {*;}
+-ignorewarnings
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+-keepclasseswithmembernames class * { # 保持native方法不被混淆
     native <methods>;
 }
+
+-keepclassmembers enum * {  # 使用enum类型时需要注意避免以下两个方法混淆，因为enum类的特殊性，以下两个方法会被反射调用，
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+################support###############
+-keep class android.support.** { *; }
+-keep interface android.support.** { *; }
+-dontwarn android.support.**
+
+-keep class com.google.android.material.** {*;}
+-keep class androidx.** {*;}
+-keep public class * extends androidx.**
+-keep interface androidx.** {*;}
+-dontwarn com.google.android.material.**
+-dontnote com.google.android.material.**
+-dontwarn androidx.**
+################glide###############
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+################retrofit###############
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keepattributes Signature
--keep class sun.misc.Unsafe { *; }
--keep class com.taobao.** {*;}
--keep class com.alibaba.** {*;}
--keep class com.alipay.** {*;}
--keep class com.ut.** {*;}
--keep class com.ta.** {*;}
--keep class anet.**{*;}
--keep class anetwork.**{*;}
--keep class org.android.spdy.**{*;}
--keep class org.android.agoo.**{*;}
--keep class android.os.**{*;}
--keep class org.json.**{*;}
--dontwarn com.taobao.**
--dontwarn com.alibaba.**
--dontwarn com.alipay.**
--dontwarn anet.**
--dontwarn org.android.spdy.**
--dontwarn org.android.agoo.**
--dontwarn anetwork.**
--dontwarn com.ut.**
--dontwarn com.ta.**
+-keepattributes Exceptions
+################RxPermissions#################
+-keep class com.tbruyelle.rxpermissions2.** { *; }
+-keep interface com.tbruyelle.rxpermissions2.** { *; }
+
+-keep class me.hgj.jetpackmvvm.demo.data.model.bean.**{ *; }
+
+# 保留自定义控件(继承自View)不能被混淆
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(***);
+    *** get* ();
+}
+-dontwarn com.kingja.loadsir.**
+-keep class com.kingja.loadsir.** {*;}
+
+-keep class com.just.agentweb.** {
+    *;
+}
+
+-dontwarn com.just.agentweb.**
+
+-keepattributes *Annotation*
+-keep class **.*_SnakeProxy
+-keep @com.youngfeng.snake.annotations.EnableDragToClose public class *
+
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+
+# SearchView
+-keep class androidx.appcompat.widget.SearchView {
+    ImageView mGoButton;
+}
 
 
-# 小米通道
--keep class com.xiaomi.** {*;}
--dontwarn com.xiaomi.**
-# 华为通道
--keep class com.huawei.** {*;}
--dontwarn com.huawei.**
-# GCM/FCM通道
--keep class com.google.firebase.**{*;}
--dontwarn com.google.firebase.**
-# OPPO通道
--keep public class * extends android.app.Service
-# VIVO通道
--keep class com.vivo.** {*;}
--dontwarn com.vivo.**
-# 魅族通道
--keep class com.meizu.cloud.** {*;}
--dontwarn com.meizu.cloud.**
+################ ViewBinding & DataBinding ###############
+-keepclassmembers class * implements androidx.viewbinding.ViewBinding {
+  public static * inflate(android.view.LayoutInflater);
+  public static * inflate(android.view.LayoutInflater, android.view.ViewGroup, boolean);
+  public static * bind(android.view.View);
+}
+
+
+

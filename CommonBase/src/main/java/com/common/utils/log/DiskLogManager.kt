@@ -1,5 +1,6 @@
 package com.common.utils.log
 
+import android.text.format.DateFormat
 import android.util.Log
 import java.io.File
 import java.util.Collections
@@ -55,6 +56,28 @@ object DiskLogManager {
             // 保存删除时间
             lastDelTime = currentTime
         }
+    }
+
+
+    fun getListFiles(dir: File, startTime: Long, endTime: Long): List<File>? {
+        if (!isDir(dir)) {
+            return null
+        }
+
+        val startFile = DateFormat.format(DiskLogHandle.LOG_FILE_NAME, startTime).toString()
+        val endFile = DateFormat.format(DiskLogHandle.LOG_FILE_NAME, endTime).toString()
+
+        val list = ArrayList<File>()
+        dir.listFiles()?.forEach {
+            val name = it.name
+            if (name.endsWith(".zip")) return@forEach
+
+            val lastModified = it.lastModified()
+            if (name.startsWith(startFile) || name.startsWith(endFile) || lastModified in startTime..endTime) {
+                list.add(it)
+            }
+        }
+        return list
     }
 
 

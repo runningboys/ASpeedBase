@@ -147,7 +147,7 @@ object AppManager {
         // 时间改变监听
         TimeReceiver.addListener(object : TimeListener {
             override fun onTimeChange() {
-                NetTimeUtil.calculateOffsetTime()
+                NetTimeUtil.update()
             }
         })
     }

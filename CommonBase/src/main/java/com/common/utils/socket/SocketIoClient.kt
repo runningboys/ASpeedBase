@@ -1,4 +1,4 @@
-package com.common.utils.network
+package com.common.utils.socket
 
 import com.common.utils.log.LogUtil
 import io.socket.client.Ack

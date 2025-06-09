@@ -1,9 +1,11 @@
 package com.common.utils.time;
 
+import android.os.SystemClock;
+
 import com.common.data.ResultData;
-import com.common.utils.serialization.GsonUtil;
-import com.common.utils.network.NetworkUtil;
 import com.common.utils.log.LogUtil;
+import com.common.utils.network.NetworkUtil;
+import com.common.utils.serialization.GsonUtil;
 import com.common.utils.store.SpManager;
 import com.common.utils.thread.ThreadUtil;
 import com.google.gson.annotations.SerializedName;
@@ -29,6 +31,7 @@ public class NetTimeUtil {
     private static final String NET_TIME_NAME = "net_time";
     private static final String KEY_OFFSET_TIME = "offsetTime";
 
+    private static long defaultOffset;
     private static long offsetTime;
 
     // Boolean值表示链接能否高精度获取时间戳
@@ -41,7 +44,7 @@ public class NetTimeUtil {
         webUrlMap.put("https://www.baidu.com", false);  //百度
         webUrlMap.put("https://www.taobao.com", false); //淘宝
         webUrlMap.put("https://www.360.cn", false);     //360
-        webUrlMap.put("https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp", true); // 淘宝接口
+//        webUrlMap.put("https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp", true); // 淘宝接口
     }
 
 
@@ -52,6 +55,26 @@ public class NetTimeUtil {
      */
     public static long currentTimeMillis() {
         return System.currentTimeMillis() + offsetTime;
+    }
+
+
+    public static void setServerTime(long time) {
+        long curTime = System.currentTimeMillis();
+        long elapsedTime = SystemClock.elapsedRealtime();
+        defaultOffset = curTime - elapsedTime;
+        offsetTime = time - curTime;
+    }
+
+
+    public static void update() {
+        long curTime = System.currentTimeMillis();
+        long elapsedTime = SystemClock.elapsedRealtime();
+        long elapsedOffset = curTime - elapsedTime;
+        if (defaultOffset != 0 && Math.abs(elapsedOffset - defaultOffset) > 10) {
+            long time = elapsedTime + defaultOffset;
+            offsetTime = time - curTime;
+            LogUtil.i(TAG, "update --> offsetTime:" + offsetTime);
+        }
     }
 
 

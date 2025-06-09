@@ -73,7 +73,7 @@ object LogUtil {
      */
     @JvmStatic
     fun i(msg: String, maxDepth: Int) {
-        commonLog(LogLevel.INFO, "", """$msg${StackTraceUtil.getCroppedStackTraceString(maxDepth)}""".trimIndent())
+        commonLog(LogLevel.INFO, "", "${msg}\n${StackTraceUtil.getCroppedStackTraceString(maxDepth)}")
     }
 
     /**
@@ -85,7 +85,7 @@ object LogUtil {
      */
     @JvmStatic
     fun i(tag: String, msg: String, maxDepth: Int) {
-        commonLog(LogLevel.INFO, tag, """$msg${StackTraceUtil.getCroppedStackTraceString(maxDepth)}""".trimIndent())
+        commonLog(LogLevel.INFO, tag, "${msg}\n${StackTraceUtil.getCroppedStackTraceString(maxDepth)}")
     }
 
     /**
@@ -162,7 +162,7 @@ object LogUtil {
      */
     @JvmStatic
     fun e(tag: String, msg: String, stackTrace: Array<StackTraceElement>, start: Int, maxDepth: Int) {
-        commonLog(LogLevel.ERROR, tag, """$msg${StackTraceUtil.getCroppedStackTraceString(stackTrace, start, maxDepth)}""".trimIndent())
+        commonLog(LogLevel.ERROR, tag,"${msg}\n${StackTraceUtil.getCroppedStackTraceString(stackTrace, start, maxDepth)}")
     }
 
     /**
@@ -174,7 +174,7 @@ object LogUtil {
      */
     @JvmStatic
     fun e(tag: String, msg: String, maxDepth: Int) {
-        commonLog(LogLevel.ERROR, tag, """$msg${StackTraceUtil.getCroppedStackTraceString(maxDepth)}""".trimIndent())
+        commonLog(LogLevel.ERROR, tag, "${msg}\n${StackTraceUtil.getCroppedStackTraceString(maxDepth)}")
     }
 
     /**

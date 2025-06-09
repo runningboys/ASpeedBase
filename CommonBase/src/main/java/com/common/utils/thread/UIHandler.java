@@ -87,6 +87,16 @@ public class UIHandler extends Handler {
         }
     }
 
+    public static boolean containsTask(String tag) {
+        int what = tag.hashCode();
+        return taskMap.containsKey(what);
+    }
+
+    public static Runnable getTask(String tag) {
+        int what = tag.hashCode();
+        return taskMap.get(what);
+    }
+
     /**
      * 是否主线程
      *
@@ -94,6 +104,13 @@ public class UIHandler extends Handler {
      */
     public static boolean isMainThread() {
         return Looper.myLooper() == Looper.getMainLooper();
+    }
+
+    /**
+     * 清空当前Handler队列所有消息
+     */
+    public static void dispose() {
+        getInstance().removeCallbacksAndMessages(null);
     }
 
     @Override

@@ -43,7 +43,7 @@ class DiskLogHandle(
     }
 
     companion object {
-        private const val LOG_FILE_NAME = "yyyy-MM-dd-HH" // 日志文件名格式
+        const val LOG_FILE_NAME = "yyyy-MM-dd-HH" // 日志文件名格式
         private const val EMPTY_WHAT = 100 // 空消息what
         private const val LOG_WHAT = 200 // 日志消息what
         private const val SPACE_TIME: Long = 1000 // 间隔1s打印
@@ -109,7 +109,7 @@ class DiskLogHandle(
             }
 
             // 判断写入权限
-            if (hasStoragePermission(mContext)) {
+//            if (hasStoragePermission(mContext)) {
                 val content = msg.obj as String
 
                 // 处理文件:过期或过大
@@ -121,7 +121,7 @@ class DiskLogHandle(
                 val logFile = getLogFile(mFolderPath, fileName)
                 // 写入日志内容到文件
                 writeLogToFile(logFile, content)
-            }
+//            }
         }
     }
 

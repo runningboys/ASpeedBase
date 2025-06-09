@@ -1,5 +1,6 @@
 package com.common.utils.time
 
+import com.common.utils.log.LogUtil
 import com.common.utils.thread.UIHandler
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.DelayQueue
@@ -20,7 +21,7 @@ object TaskTimeManager {
     private var isRunning = false
 
     // 执行任务采用单线程池
-    private val executor: Executor = Executors.newSingleThreadExecutor()
+    private val executor = Executors.newSingleThreadExecutor()
 
     // 执行倒计时任务的延迟队列
     private val delayQueue = DelayQueue<DelayWrapper>()
@@ -64,6 +65,12 @@ object TaskTimeManager {
     fun clearAll() {
         taskMap.clear()
         delayQueue.clear()
+        awakenQueue()
+    }
+
+
+    private fun awakenQueue() {
+        delayQueue.offer(DelayWrapper(Task("", 0, 0) { }))
     }
 
 
@@ -80,10 +87,11 @@ object TaskTimeManager {
                     // 获取阻塞，到时间再获取
                     val wrapper = delayQueue.take()
                     val task = wrapper.task
-                    taskMap.remove(task.id)
-                    UIHandler.run { task.runnable.run() }
+                    val taskId = task.id
+                    taskMap.remove(taskId)
+                    if (taskId.isNotBlank()) UIHandler.run { task.runnable.run() }
                 } catch (e: InterruptedException) {
-                    e.printStackTrace()
+                    LogUtil.e(e)
                     break
                 }
             }
@@ -108,7 +116,7 @@ object TaskTimeManager {
             val duration = task.duration
             val startTime = task.startTime
             val endTime = startTime + duration
-            val currentTime = System.currentTimeMillis()
+            val currentTime = NetTimeUtil.currentTimeMillis()
             return endTime - currentTime
         }
 
